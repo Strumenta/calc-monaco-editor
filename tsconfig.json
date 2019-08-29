@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "es5",
+    "sourceMap": true,
+    "outDir": "src/main-generated/javascript"
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include" : [
+    "src/main/typescript"
+  ]
+}
