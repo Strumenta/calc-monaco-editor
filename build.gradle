@@ -1,0 +1,36 @@
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    runtime 'org.antlr:antlr4:4.7.2'
+}
+
+task generateLexer(type:JavaExec) {
+  def lexerName = "CalcLexer"
+  inputs.file("$ANTLR_SRC/${lexerName}.g4")
+  outputs.file("$GEN_JS_SRC/${lexerName}.js")
+  outputs.file("$GEN_JS_SRC/${lexerName}.interp")
+  outputs.file("$GEN_JS_SRC/${lexerName}.tokens")
+  main = 'org.antlr.v4.Tool'
+  classpath = sourceSets.main.runtimeClasspath
+  args = ['-Dlanguage=JavaScript', "${lexerName}.g4", '-o', '../../main-generated/javascript']
+  workingDir = ANTLR_SRC   
+}
+
+task generateParser(type:JavaExec) {
+  dependsOn generateLexer
+  def lexerName = "CalcLexer"
+  def parserName = "CalcParser"
+  inputs.file("$ANTLR_SRC/${parserName}.g4")
+  inputs.file("$GEN_JS_SRC/${lexerName}.tokens")
+  outputs.file("$GEN_JS_SRC/${parserName}.js")
+  outputs.file("$GEN_JS_SRC/${parserName}.interp")
+  outputs.file("$GEN_JS_SRC/${parserName}.tokens")
+  main = 'org.antlr.v4.Tool'
+  classpath = sourceSets.main.runtimeClasspath
+  args = ['-Dlanguage=JavaScript', "${parserName}.g4", '-no-listener', '-no-visitor', '-o', '../../main-generated/javascript']
+  workingDir = ANTLR_SRC
+}
