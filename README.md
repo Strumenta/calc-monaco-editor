@@ -7,3 +7,9 @@ It shows how to integrate ANTLR with monaco.
 This is the companion repository to this ARTICLE
 
 SCREENSHOT
+
+## Generating the lexer and the parser
+
+```
+./gradlew generateParser
+```
