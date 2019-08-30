@@ -19,3 +19,15 @@ describe('Basic lexing without spaces', function () {
     checkToken(tokens, 1, 'EQUAL', 1, "=");
     checkToken(tokens, 2, 'NUMBER_LIT', 2, "5");
 });
+
+describe('Basic lexing with spaces', function () {
+    let tokens = parserFacade.getTokens("a = 5");
+    it('should return 5 tokens', function() {
+        assert.equal(tokens.length, 5);
+    });
+    checkToken(tokens, 0, 'ID', 0, "a");
+    checkToken(tokens, 1, 'WS', 1, " ");
+    checkToken(tokens, 2, 'EQUAL', 2, "=");
+    checkToken(tokens, 3, 'WS', 3, " ");
+    checkToken(tokens, 4, 'NUMBER_LIT', 4, "5");
+});
