@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Calc Editor</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+</head>
+<body>
+
+<h2>Calc Editor</h2>
+<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+
+<script src="node_modules/monaco-editor/min/vs/loader.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+	require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs' }});
+
+	require(['vs/editor/editor.main'], function() {
+		monaco.languages.register({ id: 'calc' });
+		let editor = monaco.editor.create(document.getElementById('container'), {
+			value: [
+				'input a',
+				'b = a * 2',
+				'c = (a - b) / 3',
+				'output c',
+				''
+			].join('\n'),
+			language: 'calc'
+		});
+
+	});
+</script>
+</body>
+</html>
