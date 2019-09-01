@@ -18,6 +18,39 @@
 
 	require(['vs/editor/editor.main'], function() {
 		monaco.languages.register({ id: 'calc' });
+
+		monaco.languages.setTokensProvider('calc', new CalcTokensProvider.CalcTokensProvider());
+
+		let literalFg = '3b8737';
+		let idFg = '344482';
+		let symbolsFg = '000000';
+		let keywordFg = '7132a8';
+		let errorFg = 'ff0000';
+
+		monaco.editor.defineTheme('myCoolTheme', {
+			base: 'vs',
+			inherit: false,
+			rules: [
+				{ token: 'number_lit.calc',   foreground: literalFg },
+
+				{ token: 'id.calc',           foreground: idFg,       fontStyle: 'italic' },
+
+				{ token: 'lparen.calc',       foreground: symbolsFg },
+				{ token: 'rparen.calc',       foreground: symbolsFg },
+
+				{ token: 'equal.calc',        foreground: symbolsFg },
+				{ token: 'minus.calc',        foreground: symbolsFg },
+				{ token: 'plus.calc',         foreground: symbolsFg },
+				{ token: 'div.calc',          foreground: symbolsFg },
+				{ token: 'mul.calc',          foreground: symbolsFg },
+
+				{ token: 'input_kw.calc',     foreground: keywordFg,  fontStyle: 'bold' },
+				{ token: 'output_kw.calc',    foreground: keywordFg,  fontStyle: 'bold' },
+
+				{ token: 'unrecognized.calc', foreground: errorFg }
+			]
+		});
+
 		let editor = monaco.editor.create(document.getElementById('container'), {
 			value: [
 				'input a',
@@ -26,7 +59,8 @@
 				'output c',
 				''
 			].join('\n'),
-			language: 'calc'
+			language: 'calc',
+			theme: 'myCoolTheme'
 		});
 
 	});

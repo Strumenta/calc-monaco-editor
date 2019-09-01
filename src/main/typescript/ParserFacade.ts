@@ -11,7 +11,7 @@ class MyErrorListener extends error.ErrorListener {
 
 }
 
-function createLexer(input: String) {
+export function createLexer(input: String) {
     const chars = new InputStream(input);
     const lexer = new CalcLexer(chars);
 
