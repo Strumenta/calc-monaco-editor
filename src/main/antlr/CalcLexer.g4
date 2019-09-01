@@ -3,7 +3,7 @@ lexer grammar CalcLexer;
 channels { WS_CHANNEL }
 
 WS: [ \t]+ -> channel(WS_CHANNEL);
-NL: ('\r\n' | '\r' | '\n') -> channel(WS_CHANNEL);
+NL: ('\r\n' | '\r' | '\n');
 
 INPUT_KW : 'input' ;
 OUTPUT_KW : 'output' ;

@@ -14,7 +14,8 @@ module.exports = {
         modules: ['node_modules'],
         extensions: [ '.tsx', '.ts', '.js' ]
     },
-    mode: 'production',
+    //mode: 'production',
+    mode: 'development',
     node: {
         fs: 'empty',
         global: true,
