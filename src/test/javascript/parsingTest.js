@@ -97,4 +97,19 @@ describe('Validation of examples being edited', function () {
         assert.equal(e.endCol, 15);
         assert.equal(e.message, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}");
     });
+    it('adding plus to expression', function () {
+        let input = "input a\n" +
+            "b = a * 2 +\n" +
+            "c = (a - b) / 3\n" +
+            "output c\n";
+        let errors = parserFacade.validate(input);
+        console.log(errors);
+        assert.equal(errors.length, 1);
+        // var e = errors[0];
+        // assert.equal(e.startLine, 3);
+        // assert.equal(e.endLine, 3);
+        // assert.equal(e.startCol, 14);
+        // assert.equal(e.endCol, 15);
+        // assert.equal(e.message, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}");
+    });
 });
