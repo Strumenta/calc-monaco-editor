@@ -99,26 +99,26 @@ class CalcErrorStrategy extends DefaultErrorStrategy {
 // // public EventErrorStrategy() : base()
 // //     { }
 // //
-    sync(recognizer: Parser) {
-        //console.log("sync " + recognizer);
-        for (var k in recognizer) {
-            //console.log(k);
-        }
-        if (CalcParser.RULE_expression == recognizer._ctx.ruleIndex) {
-            var s = recognizer._interp.atn.states[recognizer.state];
-            var la = -2;
-            do {
-                la = recognizer.getTokenStream().LA(1);
-                recognizer.consume();
-            } while (la != CalcParser.EOF && la != CalcParser.NL)
-            //console.log("LA " + la);
-        } else {
-            super.sync(recognizer, error);
-        }
-        //console.log(recognizer._ctx.ruleIndex);
-        //CalcParser.rule
-
-    }
+//     sync(recognizer: Parser) {
+//         console.log("sync " + recognizer);
+//         for (var k in recognizer) {
+//             //console.log(k);
+//         }
+//         if (CalcParser.RULE_expression == recognizer._ctx.ruleIndex) {
+//             var s = recognizer._interp.atn.states[recognizer.state];
+//             var la = -2;
+//             do {
+//                 la = recognizer.getTokenStream().LA(1);
+//                 recognizer.consume();
+//             } while (la != CalcParser.EOF && la != CalcParser.NL)
+//             //console.log("LA " + la);
+//         } else {
+//             super.sync(recognizer, error);
+//         }
+//         //console.log(recognizer._ctx.ruleIndex);
+//         //CalcParser.rule
+//
+//     }
 //
 //      // match(ttype) {
 //      //
