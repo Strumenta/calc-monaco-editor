@@ -105,11 +105,11 @@ describe('Validation of examples being edited', function () {
         let errors = parserFacade.validate(input);
         console.log(errors);
         assert.equal(errors.length, 1);
-        // var e = errors[0];
-        // assert.equal(e.startLine, 3);
-        // assert.equal(e.endLine, 3);
-        // assert.equal(e.startCol, 14);
-        // assert.equal(e.endCol, 15);
-        // assert.equal(e.message, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}");
+        var e = errors[0];
+        assert.equal(e.startLine, 2);
+        assert.equal(e.endLine, 2);
+        assert.equal(e.startCol, 11);
+        assert.equal(e.endCol, 12);
+        assert.equal(e.message, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}");
     });
 });
