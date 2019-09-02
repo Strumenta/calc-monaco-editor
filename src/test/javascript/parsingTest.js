@@ -9,6 +9,33 @@ function checkToken(tokens, index, typeName, column, text) {
     });
 }
 
+function checkError(actualError, expectedError) {
+    it('should have startLine ' + expectedError.startLine, function () {
+        assert.equal(actualError.startLine, expectedError.startLine);
+    });
+    it('should have endLine ' + expectedError.endLine, function () {
+        assert.equal(actualError.endLine, expectedError.endLine);
+    });
+    it('should have startCol ' + expectedError.startCol, function () {
+        assert.equal(actualError.startCol, expectedError.startCol);
+    });
+    it('should have endCol ' + expectedError.endCol, function () {
+        assert.equal(actualError.endCol, expectedError.endCol);
+    });
+    it('should have message ' + expectedError.message, function () {
+        assert.equal(actualError.message, expectedError.message);
+    });
+}
+
+function checkErrors(actualErrors, expectedErrors) {
+    it('should have ' + expectedErrors.length  + ' error(s)', function (){
+        assert.equal(actualErrors.length, expectedErrors.length);
+    });
+    iterate over errors
+    for (var e in )
+    checkError(
+}
+
 describe('Basic parsing of empty file', function () {
     assert.equal(parserFacade.parseTreeStr(""), "(compilationUnit <EOF>)")
 });
@@ -36,12 +63,7 @@ describe('Validation of simple errors on single lines', function () {
         it('should have 1 error', function (){
             assert.equal(errors.length, 1);
         });
-        var e = errors[0];
-        assert.equal(e.startLine, 1);
-        assert.equal(e.endLine, 1);
-        assert.equal(e.startCol, 8);
-        assert.equal(e.endCol, 9);
-        assert.equal(e.message, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}");
+        checkError(errors[0], new parserFacade.Error(1, 1, 8, 9, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}"))
     });
     it('should have recognize extra operator', function () {
         let input = "o = i +* 2 \n";

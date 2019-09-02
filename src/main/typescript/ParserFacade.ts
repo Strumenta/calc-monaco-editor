@@ -11,12 +11,12 @@ class ConsoleErrorListener extends error.ErrorListener {
     }
 }
 
-class Error {
-    startLine: number
-    endLine: number
-    startCol: number
-    endCol: number
-    message: string
+export class Error {
+    startLine: number;
+    endLine: number;
+    startCol: number;
+    endCol: number;
+    message: string;
 
     constructor(startLine: number, endLine: number, startCol: number, endCol: number, message: string) {
         this.startLine = startLine;
@@ -139,9 +139,6 @@ export function validate(input) : Error[] {
     const parser = createParserFromLexer(lexer);
     parser.removeErrorListeners();
     parser.addErrorListener(new CollectorErrorListener(errors));
-    // for (var k in parser) {
-    //     console.log(k);
-    // }
     parser._errHandler = new CalcErrorStrategy();
 
     const tree = parser.compilationUnit();
