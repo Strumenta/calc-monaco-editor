@@ -37,7 +37,6 @@ describe('Validation of simple errors on single lines', function () {
             assert.equal(errors.length, 1);
         });
         var e = errors[0];
-        console.log(e);
         assert.equal(e.startLine, 1);
         assert.equal(e.endLine, 1);
         assert.equal(e.startCol, 8);
@@ -103,7 +102,6 @@ describe('Validation of examples being edited', function () {
             "c = (a - b) / 3\n" +
             "output c\n";
         let errors = parserFacade.validate(input);
-        console.log(errors);
         assert.equal(errors.length, 1);
         var e = errors[0];
         assert.equal(e.startLine, 2);
