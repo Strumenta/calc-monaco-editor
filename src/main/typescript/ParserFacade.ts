@@ -126,7 +126,6 @@ class CalcErrorStrategy extends DefaultErrorStrategy {
         this.endErrorCondition(recognizer);
     };
 
-
 }
 
 export function validate(input) : Error[] {
