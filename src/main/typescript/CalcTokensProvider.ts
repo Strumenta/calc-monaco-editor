@@ -50,7 +50,7 @@ class CalcLineTokens implements ILineTokens {
 }
 
 export function tokensForLine(input: string): monaco.languages.ILineTokens {
-    var errorStartingPoints : number[] = []
+    let errorStartingPoints: number[] = [];
 
     class ErrorCollectorListener extends error.ErrorListener {
         syntaxError(recognizer, offendingSymbol, line, column, msg, e) {

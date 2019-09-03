@@ -31,9 +31,15 @@ function checkErrors(actualErrors, expectedErrors) {
     it('should have ' + expectedErrors.length  + ' error(s)', function (){
         assert.equal(actualErrors.length, expectedErrors.length);
     });
-    iterate over errors
-    for (var e in )
-    checkError(
+    var i;
+    for (i = 0; i < expectedErrors.length; i++) {
+        checkError(actualErrors[i], expectedErrors[i]);
+    }
+}
+
+function parseAndCheckErrors(input, expectedErrors) {
+    let errors = parserFacade.validate(input);
+    checkErrors(errors, expectedErrors);
 }
 
 describe('Basic parsing of empty file', function () {
@@ -57,79 +63,50 @@ describe('Basic parsing of simple script', function () {
 });
 
 describe('Validation of simple errors on single lines', function () {
-    let input = "o = i + \n";
-    let errors = parserFacade.validate(input);
     describe('should have recognize missing operand', function () {
-        it('should have 1 error', function (){
-            assert.equal(errors.length, 1);
-        });
-        checkError(errors[0], new parserFacade.Error(1, 1, 8, 9, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}"))
+        parseAndCheckErrors("o = i + \n", [
+            new parserFacade.Error(1, 1, 8, 9, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}")
+        ]);
     });
-    it('should have recognize extra operator', function () {
-        let input = "o = i +* 2 \n";
-        let errors = parserFacade.validate(input);
-        assert.equal(errors.length, 1);
-        var e = errors[0];
-        assert.equal(e.startLine, 1);
-        assert.equal(e.endLine, 1);
-        assert.equal(e.startCol, 7);
-        assert.equal(e.endCol, 8);
-        assert.equal(e.message, "extraneous input '*' expecting {NUMBER_LIT, ID, '(', '-'}");
+    describe('should have recognize extra operator', function () {
+        parseAndCheckErrors("o = i +* 2 \n", [
+            new parserFacade.Error(1, 1, 7, 8, "extraneous input '*' expecting {NUMBER_LIT, ID, '(', '-'}")
+        ]);
     });
 });
 
 describe('Validation of simple errors in small scripts', function () {
-    it('should have recognize missing operand', function () {
+    describe('should have recognize missing operand', function () {
         let input = "input i\no = i + \noutput o\n";
-        let errors = parserFacade.validate(input);
-        assert.equal(errors.length, 1);
-        var e = errors[0];
-        assert.equal(e.startLine, 2);
-        assert.equal(e.endLine, 2);
-        assert.equal(e.startCol, 8);
-        assert.equal(e.endCol, 9);
-        assert.equal(e.message, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}");
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 8, 9, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}")
+        ]);
     });
-    it('should have recognize extra operator', function () {
+    describe('should have recognize extra operator', function () {
         let input = "input i\no = i +* 2 \noutput o\n";
-        let errors = parserFacade.validate(input);
-        assert.equal(errors.length, 1);
-        var e = errors[0];
-        assert.equal(e.startLine, 2);
-        assert.equal(e.endLine, 2);
-        assert.equal(e.startCol, 7);
-        assert.equal(e.endCol, 8);
-        assert.equal(e.message, "extraneous input '*' expecting {NUMBER_LIT, ID, '(', '-'}");
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 7, 8, "extraneous input '*' expecting {NUMBER_LIT, ID, '(', '-'}")
+        ]);
     });
 });
 
 describe('Validation of examples being edited', function () {
-    it('deleting number from division', function () {
+    describe('deleting number from division', function () {
         let input = "input a\n" +
             "b = a * 2\n" +
             "c = (a - b) / \n" +
             "output c\n";
-        let errors = parserFacade.validate(input);
-        assert.equal(errors.length, 1);
-        var e = errors[0];
-        assert.equal(e.startLine, 3);
-        assert.equal(e.endLine, 3);
-        assert.equal(e.startCol, 14);
-        assert.equal(e.endCol, 15);
-        assert.equal(e.message, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}");
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(3, 3, 14, 15, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}")
+        ]);
     });
-    it('adding plus to expression', function () {
+    describe('adding plus to expression', function () {
         let input = "input a\n" +
             "b = a * 2 +\n" +
             "c = (a - b) / 3\n" +
             "output c\n";
-        let errors = parserFacade.validate(input);
-        assert.equal(errors.length, 1);
-        var e = errors[0];
-        assert.equal(e.startLine, 2);
-        assert.equal(e.endLine, 2);
-        assert.equal(e.startCol, 11);
-        assert.equal(e.endCol, 12);
-        assert.equal(e.message, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}");
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 11, 12, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}")
+        ]);
     });
 });
