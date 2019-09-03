@@ -100,6 +100,15 @@ describe('Validation of examples being edited', function () {
             new parserFacade.Error(3, 3, 14, 15, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}")
         ]);
     });
+    describe('deleting number from multiplication', function () {
+        let input = "input a\n" +
+            "b = a * \n" +
+            "c = (a - b) / 3\n" +
+            "output c\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 8, 9, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}")
+        ]);
+    });
     describe('adding plus to expression', function () {
         let input = "input a\n" +
             "b = a * 2 +\n" +
