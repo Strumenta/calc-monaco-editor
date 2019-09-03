@@ -13,3 +13,16 @@ SCREENSHOT
 ```
 ./gradlew generateParser
 ```
+
+## Build everything and run the server
+
+```
+npm install
+./gradlew generateParser
+tsc
+webpack
+cd server
+./gradlew runServer
+```
+
+Now visit http://localhost:8888
