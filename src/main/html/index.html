@@ -67,7 +67,7 @@
 			//console.log(editor.getValue());
 			let syntaxErrors = ParserFacade.validate(code);
 			let monacoErrors = [];
-			for (var e of syntaxErrors) {
+			for (let e of syntaxErrors) {
 				monacoErrors.push({
 					startLineNumber: e.startLine,
 					startColumn: e.startCol,
