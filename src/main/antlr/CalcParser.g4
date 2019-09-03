@@ -9,16 +9,20 @@ compilationUnit:
     EOF
     ;
 
+eol:
+    NL
+    ;
+
 input:
-	INPUT_KW ID
+	INPUT_KW ID eol
     ;
 
 output:
-    OUTPUT_KW ID
+    OUTPUT_KW ID eol
     ;
 
 calc:
-	target=ID EQUAL value=expression
+	target=ID EQUAL value=expression eol
 	;
 
 expression:
