@@ -74,7 +74,6 @@
 		});
 		editor.onDidChangeModelContent(function (e) {
 			let code = editor.getValue()
-			//console.log(editor.getValue());
 			let syntaxErrors = ParserFacade.validate(code);
 			let monacoErrors = [];
 			for (let e of syntaxErrors) {
