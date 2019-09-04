@@ -72,6 +72,25 @@
 			language: 'calc',
 			theme: 'myCoolTheme'
 		});
+		editor.onDidChangeModelContent(function (e) {
+			let code = editor.getValue()
+			//console.log(editor.getValue());
+			let syntaxErrors = ParserFacade.validate(code);
+			let monacoErrors = [];
+			for (let e of syntaxErrors) {
+				monacoErrors.push({
+					startLineNumber: e.startLine,
+					startColumn: e.startCol,
+					endLineNumber: e.endLine,
+					endColumn: e.endCol,
+					message: e.message,
+					severity: monaco.MarkerSeverity.Error
+				});
+			};
+			window.syntaxErrors = syntaxErrors;
+			let model = monaco.editor.getModels()[0];
+			monaco.editor.setModelMarkers(model, "owner", monacoErrors);
+		});
 
 	});
 </script>
