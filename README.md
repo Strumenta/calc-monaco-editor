@@ -6,7 +6,7 @@ It shows how to integrate ANTLR with monaco.
 
 This is the companion repository to this ARTICLE
 
-SCREENSHOT
+![Calc Example](./doc/images/calc_example.png)
 
 ## Generating the lexer and the parser
 
