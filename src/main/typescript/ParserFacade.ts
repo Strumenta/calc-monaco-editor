@@ -105,10 +105,6 @@ class CalcErrorStrategy extends DefaultErrorStrategy {
         var expecting = this.getExpectedTokens(recognizer);
         if (expecting.contains(nextTokenType)) {
             this.reportUnwantedToken(recognizer);
-            // print("recoverFromMismatchedToken deleting " \
-            // + str(recognizer.getTokenStream().LT(1)) \
-            // + " since " + str(recognizer.getTokenStream().LT(2)) \
-            // + " is what we want", file=sys.stderr)
             recognizer.consume(); // simply delete extra token
             // we want to return the token we're actually matching
             var matchedSymbol = recognizer.getCurrentToken();
@@ -129,7 +125,7 @@ class CalcErrorStrategy extends DefaultErrorStrategy {
 }
 
 export function validate(input) : Error[] {
-    let errors : Error[] = []
+    let errors : Error[] = [];
 
     const lexer = createLexer(input);
     lexer.removeErrorListeners();

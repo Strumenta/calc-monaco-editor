@@ -119,3 +119,15 @@ describe('Validation of examples being edited', function () {
         ]);
     });
 });
+
+describe('Unrecognized tokens cause errors', function () {
+    describe('extra dollor before identifier', function () {
+        let input = "input a\n" +
+            "$b = a * 2\n" +
+            "c = (a - b) / 3\n" +
+            "output c\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 0, 1, "extraneous input '$' expecting {<EOF>, 'input', 'output', ID}")
+        ]);
+    });
+});
