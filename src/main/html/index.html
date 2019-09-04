@@ -4,6 +4,7 @@
 	<title>Calc Editor</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -53,10 +54,19 @@
 
 		let editor = monaco.editor.create(document.getElementById('container'), {
 			value: [
-				'input a',
-				'b = a * 2',
-				'c = (a - b) / 3',
-				'output c',
+				'input salary',
+				'input nEmployees',
+				'input revenues',
+				'input otherExpenses',
+				'input taxRate',
+				'',
+				'totalExpenses = salary * nEmployees + otherExpenses',
+				'grossProfit = revenues - totalExpenses',
+				'totalTaxes = grossProfit * (taxRate / 100)',
+				'profit = profit - totalTaxes',
+				'',
+				'output totalTaxes',
+				'output profit',
 				''
 			].join('\n'),
 			language: 'calc',
