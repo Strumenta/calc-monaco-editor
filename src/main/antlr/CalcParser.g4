@@ -26,11 +26,11 @@ calc:
 	;
 
 expression:
-	NUMBER_LIT
-	| ID
-	| LPAREN expression RPAREN
-	| expression operator=(MUL|DIV) expression
-	| expression operator=(MINUS|PLUS) expression
-	| MINUS expression
+	NUMBER_LIT #numberLitExpr
+	| ID #refExpr
+	| LPAREN expression RPAREN #parensExpr
+	| expression operator=(MUL|DIV) expression #arithmeticExpr
+	| expression operator=(MINUS|PLUS) expression #arithmeticExpr
+	| MINUS expression #unaryMinusExpr
 	;
 	    

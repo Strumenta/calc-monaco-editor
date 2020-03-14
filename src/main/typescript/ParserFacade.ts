@@ -163,26 +163,39 @@ export function evaluateExpressionCode(expressionCode, symbolTable) : any {
 }
 
 export function evaluateExpressionTree(tree, symbolTable, parser) : any {
-    //console.log("op " + tree.operator);
-    if (tree.symbol != null) {
-        let symbolTypeName = parser.symbolicNames[tree.symbol.type];
-        //console.log("symbolTypeName " + symbolTypeName);
-        if (symbolTypeName == "NUMBER_LIT") {
-            return parseInt(tree.symbol.text)
-        } else {
-            throw "Unable to handle symbol " + symbolTypeName;
-        }
-    } else if (tree.operator == null) {
-        // console.log("CHILDREN " + tree.children.length);
-        // console.log("CHILDREN 0 " + tree.children[0]);
-        // console.log("CHILDREN 0 RULE INDEX " + tree.children[0].ruleIndex);
-        // console.log("CHILDREN 0 SYMBOL " + tree.children[0].symbol.type);
-        // let symbolType = tree.children[0].symbol.type;
-        // let symbolTypeName = tree.parser.symbolicNames[symbolType];
-        // console.log("CHILDREN 0 SYMBOL " + symbolTypeName);
-        return evaluateExpressionTree(tree.children[0], symbolTable, parser);
-    } else {
-        throw "Unable to handle operator " + tree.operator;
+    // console.log("tree " + tree + " -> " + Object.keys(tree));
+    // console.log(" rule index " + tree.ruleIndex);
+    // console.log(" parser " + parser.ruleNames);
+    // console.log(" parser " + parser.literalNames);
+    // console.log(" parser " + parser.symbolicNames);
+    // console.log(" name " + tree.constructor.name);
+    switch (tree.constructor.name) {
+        case "ParensExprContext":
+            return evaluateExpressionTree(tree.children[1], symbolTable, parser);
+        case "NumberLitExprContext":
+            return parseInt(tree.children[0].symbol.text);
+        case "RefExprContext":
+            return symbolTable[tree.children[0].symbol.text];
+        case "ArithmeticExprContext":
+            let left = evaluateExpressionTree(tree.children[0], symbolTable, parser);
+            let right = evaluateExpressionTree(tree.children[2], symbolTable, parser);
+            let op = tree.operator.type;
+            let opText = parser.symbolicNames[op];
+            switch (opText) {
+                case "PLUS":
+                    return left + right;
+                case "MINUS":
+                    return left - right;
+                case "MUL":
+                    return left * right;
+                case "DIV":
+                    return left / right;
+                default:
+                    throw "Unable to handle operator " + opText;
+            }
+            break;
+        default:
+            throw "Unable to handle expression " + tree.constructor.name;
     }
 }
 
