@@ -9,12 +9,33 @@
 <body>
 
 <h2>Calc Editor</h2>
-<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+
+<!-- Specify inputs -->
+<div id="inputs">
+
+</div>
+<!-- Specify calculations: expression or table -->
+<!-- Specify outputs -->
+
+<div id="container" style="width:400px;height:30px;border:1px solid grey"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <script src="node_modules/monaco-editor/min/vs/loader.js"></script>
 <script src="js/main.js"></script>
 
 <script>
+	window.data = { "inputs": [] }
+
+	function addInput(inputName){
+		window.data.inputs.push(inputName);
+		let inputDiv = document.createElement("div")
+		$("#inputs").append(inputDiv);
+		//inputDiv.className = 'input';
+		$(inputDiv).addClass('input');
+		$(inputDiv).append("<span class='name'>" + inputName + "</span>");
+	}
+
 	require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs' }});
 
 	require(['vs/editor/editor.main'], function() {
@@ -91,6 +112,11 @@
 			monaco.editor.setModelMarkers(model, "owner", monacoErrors);
 		});
 
+		addInput('salary');
+		addInput('nEmployees');
+		addInput('revenues');
+		addInput('otherExpenses');
+		addInput('taxRate');
 	});
 </script>
 </body>

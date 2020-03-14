@@ -5,3 +5,11 @@ h2 {
 body {
     background-color: #eee;
 }
+
+.input {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-family: monospace;
+    color: darkblue;
+    text-decoration: underline;
+}
