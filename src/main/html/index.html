@@ -272,7 +272,7 @@
 		function addType() {
 			$("#types").siblings(".empty-message").hide();
 			$("#types").append("<div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
-					+"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><span class='keyword'>}</span></div>");
+					+"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
 			prepareInputs();
 			$(".add-field-button").click(function () {
 				$(this).siblings(".message").hide();
@@ -323,12 +323,46 @@
 			}
 		}
 
-		function moveToNextElement(t) {
-			$(t).next().focus();
-			let el = $(t).next()[0];
-			if (el != undefined && el.setSelectionRange != null) {
-				el.setSelectionRange(0, 0);
+		function findNext(n) {
+			console.log("NEXT WAS " + n[0]);
+			if (n.next() == undefined) {
+				return undefined;
+			} else {
+				return n.next();
 			}
+		}
+
+		function moveToNextElement(t) {
+			console.log("move to next element");
+			window.t = t;
+			let next = $(t).next()
+			do {
+				let tag = next.prop("tagName");
+				if (tag == "INPUT") {
+					console.log("next is input");
+					next.focus();
+					let el = next[0];
+					if (el != undefined && el.setSelectionRange != null) {
+						el.setSelectionRange(0, 0);
+					}
+					return;
+				} else if (tag == "DIV") {
+					console.log("next is div");
+					if (next.find("input").length == 0) {
+						next = findNext(next);
+						console.log("NEXT IS NOW " + next[0]);
+					} else {
+						console.log("next is div not empty");
+						return;
+					}
+				} else if (tag == "SPAN") {
+					next = findNext(next);
+					console.log("NEXT IS NOW " + next[0]);
+				} else {
+					console.log("next is unknown " + tag);
+					return;
+				}
+			} while (true);
 		}
 
 		function tryToAdd(t) {

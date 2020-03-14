@@ -83,9 +83,14 @@ canvas.decorationsOverviewRuler {
     padding: 0 18px;
     display: none;
     overflow: hidden;
-    background-color: #f1f1f1;
+    background-color: white;
     padding: 10px;
     border-top: 1px #888 solid;
+    font-size: 1.2em;
+}
+
+.section-content input {
+    font-size: 1em;
 }
 
 .section-content.expanded {
@@ -137,23 +142,30 @@ plus-button:after {
 }
 
 .type-definition {
-    border: 1px #ccc solid;
+    /*border: 1px #ccc solid;*/
     margin: 4px;
     padding: 10px;
     color: purple;
 }
 
-.type-definition input {
-    color: purple;
+/*.type-definition:hover {*/
+/*    background-color: #eeeeee;*/
+/*}*/
+
+input.editable {
     background-color: #f8f8f8;
+    border-color: #eeeeee;
     border-style: solid;
     border-width: 1px;
-    border-color: #aaa;
 }
 
-.type-definition input.keyword {
+.type-definition input {
+    color: purple;
+}
+
+input.keyword {
     color: darkblue;
-    background-color: #f8f8f8;
+    background-color: white;
     border-style: solid;
     border-width: 0;
     border-color: #aaa;
