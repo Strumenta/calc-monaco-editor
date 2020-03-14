@@ -14,16 +14,30 @@ body {
     text-decoration: underline;
 }
 
+.calculations {
+    font-family: monospace;
+}
+
 .calculation > .name {
     display: inline-block;
+    color: purple;
+    margin: 3px;
 }
 
 .calculation > .keyword {
     display: inline-block;
+    margin: 3px;
+    color: darkgray;
+}
+
+.inline-editor {
+    display: inline-block;
+    border: 1px #ccc solid;
+    margin: 3px;
 }
 
 .calculation > .expression {
-    display: inline-block;
+
     /*width: 500px;
     height: 40px;*/
 }
