@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Calc Editor</title>
+	<title>Calculation Sheet</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
 	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h2>Calc Editor</h2>
+<h1>Calculation Sheet</h1>
 
-<h3>Inputs</h3>
-<!-- Specify inputs -->
-<div id="inputs"></div>
-<!-- Specify calculations: expression or table -->
-<h3>Calculations</h3>
-<div id="calculations"></div>
-<!-- Specify outputs -->
-<h3>Outputs</h3>
-<div id="outputs"></div>
+<div id="types" class="section">
+	<button type="button" class="collapsible">Types</button>
+	<div class="section-content">
+		Here there are my types
+	</div>
+</div>
+
+<div class="section">
+	<button type="button" class="collapsible">Inputs</button>
+	<div class="section-content">
+		<div id="inputs"></div>
+	</div>
+</div>
+
+<div class="section">
+	<button type="button" class="collapsible">Calculations</button>
+	<div class="section-content">
+		<div id="calculations"></div>
+	</div>
+</div>
+
+<div class="section">
+	<button type="button" class="collapsible">Outputs</button>
+	<div class="section-content">
+		<div id="outputs"></div>
+	</div>
+</div>
+
 
 <!--<div id="container" style="width:400px;height:30px;border:1px solid grey"></div>-->
 
@@ -241,6 +260,11 @@
 
 		$("#inputs .input input").change(function(){
 			window.updater();
+		});
+
+		$(".collapsible").click(function() {
+			console.log("CLICK");
+			$(this).siblings(".section-content").toggleClass("expanded");
 		});
 
 	});

@@ -3,7 +3,8 @@ h2 {
 }
 
 body {
-    background-color: #eee;
+    /*background-color: #eee;*/
+    font-family: monospace;
 }
 
 .input {
@@ -58,4 +59,42 @@ canvas.decorationsOverviewRuler {
     font-style: italic;
     color: gray;
     margin-left: 40px;
+}
+
+.collapsible {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+    background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.section-content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-top: 1px #888 solid;
+}
+
+.section-content.expanded {
+    display: block;
+}
+
+.section {
+    border: 1px #ccc solid;
+    display: table;
+    min-width: 30%;
+    margin: 20px;
 }
