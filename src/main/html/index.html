@@ -10,10 +10,13 @@
 
 <h1>Calculation Sheet</h1>
 
-<div id="types" class="section">
+<div class="section">
 	<button type="button" class="collapsible">Types</button>
-	<div class="section-content">
-		Here there are my types
+	<div class="section-content expanded">
+		<span class="empty-message">No types</span>
+		<br>
+		<div id="types"></div>
+		<button class="plus-button" id="add-type-button">+</button>
 	</div>
 </div>
 
@@ -149,7 +152,7 @@
 			/*} else {
 				width = $(".view-line > span")[0].getBoundingClientRect().width + 30;
 			}*/
-			console.log("WIDTH " + width);
+			//console.log("WIDTH " + width);
 
 			editorElement.style.height = `${height}px`;
 			editor.layout({
@@ -263,9 +266,48 @@
 		});
 
 		$(".collapsible").click(function() {
-			console.log("CLICK");
 			$(this).siblings(".section-content").toggleClass("expanded");
 		});
+
+		$("#add-type-button").click(function () {
+			$("#types").siblings(".empty-message").hide();
+			$("#types").append("<div class='type-definition'><span class='keyword'>type</span> <input value='My type' required> <span class='keyword'>{</span><div class='fields'><span class='message'>no fields</span><br><button class='plus-button add-field-button'>+</button></div><span class='keyword'>}</span></div>");
+			installAutoresize();
+			$(".add-field-button").click(function () {
+				$(this).siblings(".message").hide();
+				console.log("add field");
+			});
+		});
+
+
+		$.fn.textWidth = function(_text, _font){
+			var textToConsider = _text || this.val();
+			if (textToConsider == "") {
+				textToConsider = this[0].placeholder;
+			}
+			var fakeEl = $('<span>').hide().appendTo(document.body).text(textToConsider).css({font: _font || this.css('font'), whiteSpace: "pre"}),
+					width = fakeEl.width();
+			fakeEl.remove();
+			return width;
+		};
+
+		$.fn.inputWidthUpdate = function(options) {
+			options = $.extend({padding:10,minWidth:0,maxWidth:10000}, options||{});
+			$(this).css('width', Math.min(options.maxWidth,Math.max(options.minWidth,$(this).textWidth() + options.padding)));
+		};
+
+		$.fn.autoresize = function(options){//resizes elements based on content size.  usage: $('input').autoresize({padding:10,minWidth:0,maxWidth:100});
+			$(this).on('input', function() {
+				$(this).inputWidthUpdate(options);
+			}).trigger('input');
+			return this;
+		};
+
+		let myAutoresizeOptions = {padding:2,minWidth:10,maxWidth:300};
+
+		function installAutoresize() {
+			$("input").autoresize(myAutoresizeOptions);
+		};
 
 	});
 </script>

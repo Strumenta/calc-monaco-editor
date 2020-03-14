@@ -98,3 +98,73 @@ canvas.decorationsOverviewRuler {
     min-width: 30%;
     margin: 20px;
 }
+
+.plus-button {
+    border: 2px solid lightgrey;
+    background-color: #fff;
+    font-size: 10px;
+    height: 2.5em;
+    width: 2.5em;
+    border-radius: 999px;
+    position: relative;
+}
+
+plus-button:after,
+plus-button:before {
+     content: "";
+     display: block;
+     background-color: grey;
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+}
+
+plus-button:before {
+     height: 1em;
+     width: 0.2em;
+}
+
+plus-button:after {
+     height: 0.2em;
+     width: 1em;
+}
+
+.empty-message {
+    font-style: italic;
+    color: gray;
+    margin-bottom: 10px;
+}
+
+.type-definition {
+    border: 1px #ccc solid;
+    margin: 4px;
+    padding: 10px;
+    color: purple;
+}
+
+.type-definition input {
+    color: purple;
+    background-color: #f8f8f8;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #aaa;
+}
+
+input:invalid {
+    background-color: #FFBDB3;
+}
+
+.keyword {
+    color: darkblue;
+}
+
+.fields {
+    margin-left: 30px;
+}
+
+.message {
+    font-style: italic;
+    color: gray;
+    margin-bottom: 10px;
+}
