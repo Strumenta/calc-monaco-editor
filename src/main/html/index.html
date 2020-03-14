@@ -74,6 +74,10 @@
 			/* No line numbers: end */
 			minimap: {
 				enabled: false
+			},
+			scrollbar : {
+				vertical: 'hidden',
+				horizontal: 'hidden',
 			}
 		});
 		window.editor = editor;
@@ -104,9 +108,9 @@
 			let lineCount = model.getLineCount();
 			// Do not invalidate layout if the line count hasn't changed, as this method
 			// will be called for every keypress and layouts are too expensive.
-			if (lineCount == lastResizedLineCount) {
+			/*if (lineCount == lastResizedLineCount) {
 				return;
-			}
+			}*/
 			lastResizedLineCount = lineCount;
 
 			const configuration = editor.getConfiguration();
@@ -115,7 +119,13 @@
 
 			const horizontalScrollbarHeight = configuration.layoutInfo.horizontalScrollbarHeight;
 			const height = contentHeight + horizontalScrollbarHeight - 10;
-			const width = editor.getValue().length * 10;
+			//const width = editor.getValue().length * 7 + 30;
+			var width = 0;
+			/*if ($(".view-line > span")[0] == undefined) {*/
+				width = editor.getValue().length * 7 + 30;
+			/*} else {
+				width = $(".view-line > span")[0].getBoundingClientRect().width + 30;
+			}*/
 			console.log("WIDTH " + width);
 
 			editorElement.style.height = `${height}px`;
@@ -129,6 +139,7 @@
 		}
 
 		model.onDidChangeContent(() => {
+			console.log("content changed");
 			editorUpdate();
 		});
 

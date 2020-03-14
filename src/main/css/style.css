@@ -23,7 +23,15 @@ body {
 }
 
 .calculation > .expression {
-    /*display: inline-block;*/
-    width: 500px;
-    height: 40px;
+    display: inline-block;
+    /*width: 500px;
+    height: 40px;*/
+}
+
+canvas.decorationsOverviewRuler {
+    display: none;
+}
+
+.slider {
+    display: none;
 }
