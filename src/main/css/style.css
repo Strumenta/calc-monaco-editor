@@ -13,3 +13,17 @@ body {
     color: darkblue;
     text-decoration: underline;
 }
+
+.calculation > .name {
+    display: inline-block;
+}
+
+.calculation > .keyword {
+    display: inline-block;
+}
+
+.calculation > .expression {
+    /*display: inline-block;*/
+    width: 500px;
+    height: 40px;
+}

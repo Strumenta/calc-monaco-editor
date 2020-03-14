@@ -15,7 +15,15 @@
 <div id="inputs"></div>
 <!-- Specify calculations: expression or table -->
 <h3>Calculations</h3>
-<div id="calculations"></div>
+<div id="calculations">
+
+	<div class="calculation">
+		<div class="name">totalExpenses</div>
+		<div class="keyword">=</div>
+		<div class="expression">MyValue + 2</div>
+	</div>
+
+</div>
 <!-- Specify outputs -->
 <h3>Outputs</h3>
 <div id="outputs"></div>
@@ -45,84 +53,33 @@
 		$("#calculations").append(newDiv);
 		//inputDiv.className = 'input';
 		$(newDiv).addClass('calculation');
-
-		// <div class="calculation">
-		// 		<div class="name">totalExpenses</div>
-		// 		<div class="keyword">=</div>
-		// 		<div class="expression">MyValue + 2</div>
-		// 		</div>
-
-		$(newDiv).append("<div class='name'>" + calculationName + "</div>");
-		$(newDiv).append("<div class='keyword'>=</div>");
+		$(newDiv).append("<span class='name'>" + calculationName + "</span>");
 		let editorDiv = document.createElement('div');
 		$(editorDiv).addClass('inline-editor');
-		$(editorDiv).addClass('expression');
 		$(newDiv).append(editorDiv);
 
 		let editor = monaco.editor.create(editorDiv, {
 			value: 'myExpressionGoesHere',
 			language: 'calc',
-			theme: 'myCoolTheme',
-
-			/* No line numbers: start */
-			lineNumbers: 'off',
-			glyphMargin: false,
-			folding: false,
-			// Undocumented see https://github.com/Microsoft/vscode/issues/30795#issuecomment-410998882
-			lineDecorationsWidth: 0,
-			lineNumbersMinChars: 0,
-			/* No line numbers: end */
-			minimap: {
-				enabled: false
-			}
+			theme: 'myCoolTheme'
 		});
-		window.editor = editor;
-		// editor.onDidChangeModelContent(function (e) {
-		// 	let code = editor.getValue()
-		// 	let syntaxErrors = ParserFacade.validate(code);
-		// 	let monacoErrors = [];
-		// 	for (let e of syntaxErrors) {
-		// 		monacoErrors.push({
-		// 			startLineNumber: e.startLine,
-		// 			startColumn: e.startCol,
-		// 			endLineNumber: e.endLine,
-		// 			endColumn: e.endCol,
-		// 			message: e.message,
-		// 			severity: monaco.MarkerSeverity.Error
-		// 		});
-		// 	};
-		// 	window.syntaxErrors = syntaxErrors;
-		// 	let model = monaco.editor.getModels()[0];
-		// 	monaco.editor.setModelMarkers(model, "owner", monacoErrors);
-		// });
-
-		let lastResizedLineCount = 0;
-		let model = monaco.editor.getModels()[0];
-		let editorElement = editorDiv;
-		model.onDidChangeContent(() => {
-			let lineCount = model.getLineCount();
-			// Do not invalidate layout if the line count hasn't changed, as this method
-			// will be called for every keypress and layouts are too expensive.
-			if (lineCount == lastResizedLineCount) {
-				return;
-			}
-			lastResizedLineCount = lineCount;
-
-			const configuration = editor.getConfiguration();
-			const lineHeight = configuration.lineHeight;
-			const contentHeight = lineHeight * lineCount;
-
-			const horizontalScrollbarHeight = configuration.layoutInfo.horizontalScrollbarHeight;
-			const height = contentHeight + horizontalScrollbarHeight;
-
-			editorElement.style.height = `${height}px`;
-			editor.layout({
-				height,
-				//width: this.getElement().clientWidth,
-				//width: editorElement.clientWidth,
-				// Here we could make it depends on content
-				width: 200
-			});
+		editor.onDidChangeModelContent(function (e) {
+			let code = editor.getValue()
+			let syntaxErrors = ParserFacade.validate(code);
+			let monacoErrors = [];
+			for (let e of syntaxErrors) {
+				monacoErrors.push({
+					startLineNumber: e.startLine,
+					startColumn: e.startCol,
+					endLineNumber: e.endLine,
+					endColumn: e.endCol,
+					message: e.message,
+					severity: monaco.MarkerSeverity.Error
+				});
+			};
+			window.syntaxErrors = syntaxErrors;
+			let model = monaco.editor.getModels()[0];
+			monaco.editor.setModelMarkers(model, "owner", monacoErrors);
 		});
 	}
 
