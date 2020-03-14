@@ -99,7 +99,8 @@
 		let lastResizedLineCount = 0;
 		let model = monaco.editor.getModels()[0];
 		let editorElement = editorDiv;
-		model.onDidChangeContent(() => {
+
+		function editorUpdate() {
 			let lineCount = model.getLineCount();
 			// Do not invalidate layout if the line count hasn't changed, as this method
 			// will be called for every keypress and layouts are too expensive.
@@ -113,7 +114,9 @@
 			const contentHeight = lineHeight * lineCount;
 
 			const horizontalScrollbarHeight = configuration.layoutInfo.horizontalScrollbarHeight;
-			const height = contentHeight + horizontalScrollbarHeight;
+			const height = contentHeight + horizontalScrollbarHeight - 10;
+			const width = editor.getValue().length * 10;
+			console.log("WIDTH " + width);
 
 			editorElement.style.height = `${height}px`;
 			editor.layout({
@@ -121,9 +124,15 @@
 				//width: this.getElement().clientWidth,
 				//width: editorElement.clientWidth,
 				// Here we could make it depends on content
-				width: 200
+				width: width
 			});
+		}
+
+		model.onDidChangeContent(() => {
+			editorUpdate();
 		});
+
+		editorUpdate();
 	}
 
 	require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs' }});
