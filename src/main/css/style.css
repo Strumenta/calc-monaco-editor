@@ -151,6 +151,14 @@ plus-button:after {
     border-color: #aaa;
 }
 
+.type-definition input.keyword {
+    color: darkblue;
+    background-color: #f8f8f8;
+    border-style: solid;
+    border-width: 0;
+    border-color: #aaa;
+}
+
 input:invalid {
     background-color: #FFBDB3;
 }

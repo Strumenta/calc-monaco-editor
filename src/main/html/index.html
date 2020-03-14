@@ -269,14 +269,19 @@
 			$(this).siblings(".section-content").toggleClass("expanded");
 		});
 
-		$("#add-type-button").click(function () {
+		function addType() {
 			$("#types").siblings(".empty-message").hide();
-			$("#types").append("<div class='type-definition'><span class='keyword'>type</span> <input value='My type' required> <span class='keyword'>{</span><div class='fields'><span class='message'>no fields</span><br><button class='plus-button add-field-button'>+</button></div><span class='keyword'>}</span></div>");
-			installAutoresize();
+			$("#types").append("<div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
+					+"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><span class='keyword'>}</span></div>");
+			prepareInputs();
 			$(".add-field-button").click(function () {
 				$(this).siblings(".message").hide();
 				console.log("add field");
 			});
+		}
+
+		$("#add-type-button").click(function () {
+			addType();
 		});
 
 
@@ -307,7 +312,76 @@
 
 		function installAutoresize() {
 			$("input").autoresize(myAutoresizeOptions);
-		};
+		}
+
+		function moveToPrevElement(t) {
+			$(t).prev().focus();
+			let text = $(t).prev().val();
+			let el = $(t).prev()[0];
+			if (el != undefined && el != null) {
+				el.setSelectionRange(text.length, text.length);
+			}
+		}
+
+		function moveToNextElement(t) {
+			$(t).next().focus();
+			let el = $(t).next()[0];
+			if (el != undefined && el.setSelectionRange != null) {
+				el.setSelectionRange(0, 0);
+			}
+		}
+
+		function tryToAdd(t) {
+			console.log("ADDING");
+			window.t = t;
+			$(t).siblings(".fields").find(".message").hide();
+			$(t).siblings(".fields").append("<div class='field'><input class='keyword' value='field'><input class='editable' value='my field'></div>")
+			prepareInputs();
+		}
+
+		function prepareInputs() {
+			installAutoresize();
+			$("input.keyword").on('keydown', function (e) {
+				if (e.key == "ArrowRight") {
+					e.preventDefault();
+					moveToNextElement(this);
+					return true;
+				} else if (e.key == "ArrowLeft") {
+					e.preventDefault();
+					moveToPrevElement(this);
+					return true;
+				} else if (e.key == "Enter") {
+					e.preventDefault();
+					tryToAdd(this);
+					return true;
+				}
+			});
+			$("input.editable").on('keydown', function (e) {
+				if (e.key == "ArrowRight") {
+					console.log("RIGHT " + this.selectionStart);
+					if (this.selectionStart == $(this).val().length) {
+						e.preventDefault();
+						moveToNextElement(this);
+						return true;
+					}
+				} else if (e.key == "ArrowLeft") {
+					console.log("LEFT");
+					if (this.selectionStart == 0) {
+						e.preventDefault();
+						moveToPrevElement(this);
+						return true;
+					}
+				} else if (e.key == "Enter") {
+					e.preventDefault();
+					tryToAdd(this);
+					return true;
+				} else {
+					//console.log("K " + e.key);
+				}
+			});
+		}
+
+
 
 	});
 </script>
