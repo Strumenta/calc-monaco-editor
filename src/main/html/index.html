@@ -28,11 +28,12 @@
 <script src="js/main.js"></script>
 
 <script>
-	window.data = { "inputs": [], "calculations": [] }
+	window.data = { "inputs": [], "calculations": [] };
+	window.editors = {};
 
 	function addInput(inputName, initialValue){
 		window.data.inputs.push(inputName);
-		let inputDiv = document.createElement("div")
+		let inputDiv = document.createElement("div");
 		$("#inputs").append(inputDiv);
 		//inputDiv.className = 'input';
 		$(inputDiv).addClass('input');
@@ -42,7 +43,7 @@
 
 	function addCalculation(calculationName, initialValue) {
 		window.data.calculations.push(calculationName);
-		let newDiv = document.createElement("div")
+		let newDiv = document.createElement("div");
 		$("#calculations").append(newDiv);
 		//inputDiv.className = 'input';
 		$(newDiv).addClass('calculation');
@@ -82,7 +83,8 @@
 				horizontal: 'hidden',
 			}
 		});
-		window.editor = editor;
+		window.editors[calculationName] = editor;
+		//window.editor = editor;
 		// editor.onDidChangeModelContent(function (e) {
 		// 	let code = editor.getValue()
 		// 	let syntaxErrors = ParserFacade.validate(code);
@@ -234,6 +236,13 @@
 		addCalculation('grossProfit', 'revenues - totalExpenses');
 		addCalculation('totalTaxes', 'grossProfit * (taxRate / 100)');
 		addCalculation('profit', 'grossProfit - totalTaxes');
+
+		window.updater();
+
+		$("#inputs .input input").change(function(){
+			window.updater();
+		});
+
 	});
 </script>
 </body>

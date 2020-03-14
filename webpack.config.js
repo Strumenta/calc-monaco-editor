@@ -14,7 +14,8 @@ module.exports = {
         modules: ['node_modules'],
         extensions: [ '.tsx', '.ts', '.js' ]
     },
-    mode: 'production',
+    //mode: 'production',
+    mode: 'development',
     node: {
         fs: 'empty',
         global: true,
@@ -25,5 +26,9 @@ module.exports = {
         module: false,
         clearImmediate: false,
         setImmediate: false
+    },
+    optimization: {
+        // We no not want to minimize our code.
+        minimize: false
     }
 }
