@@ -49,3 +49,13 @@ canvas.decorationsOverviewRuler {
 .slider {
     display: none;
 }
+
+.input input {
+    margin: 5px 5px 5px 20px;
+}
+
+.result {
+    font-style: italic;
+    color: gray;
+    margin-left: 40px;
+}

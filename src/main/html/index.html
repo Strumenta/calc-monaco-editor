@@ -30,16 +30,17 @@
 <script>
 	window.data = { "inputs": [], "calculations": [] }
 
-	function addInput(inputName){
+	function addInput(inputName, initialValue){
 		window.data.inputs.push(inputName);
 		let inputDiv = document.createElement("div")
 		$("#inputs").append(inputDiv);
 		//inputDiv.className = 'input';
 		$(inputDiv).addClass('input');
 		$(inputDiv).append("<span class='name'>" + inputName + "</span>");
+		$(inputDiv).append("<input type='number' value=" + initialValue + ">");
 	}
 
-	function addCalculation(calculationName) {
+	function addCalculation(calculationName, initialValue) {
 		window.data.calculations.push(calculationName);
 		let newDiv = document.createElement("div")
 		$("#calculations").append(newDiv);
@@ -58,9 +59,10 @@
 		$(editorDiv).addClass('inline-editor');
 		$(editorDiv).addClass('expression');
 		$(newDiv).append(editorDiv);
+		$(newDiv).append("<div class='result'>result is ...</div>");
 
 		let editor = monaco.editor.create(editorDiv, {
-			value: 'myExpressionGoesHere',
+			value: initialValue,
 			language: 'calc',
 			theme: 'myCoolTheme',
 
@@ -222,13 +224,16 @@
 			monaco.editor.setModelMarkers(model, "owner", monacoErrors);
 		});*/
 
-		addInput('salary');
-		addInput('nEmployees');
-		addInput('revenues');
-		addInput('otherExpenses');
-		addInput('taxRate');
+		addInput('salary', 50000);
+		addInput('nEmployees', 3);
+		addInput('revenues', 437000);
+		addInput('otherExpenses', 23000);
+		addInput('taxRate', 42);
 
-		addCalculation('totalExpenses');
+		addCalculation('totalExpenses', 'salary * nEmployees + otherExpenses');
+		addCalculation('grossProfit', 'revenues - totalExpenses');
+		addCalculation('totalTaxes', 'grossProfit * (taxRate / 100)');
+		addCalculation('profit', 'grossProfit - totalTaxes');
 	});
 </script>
 </body>
