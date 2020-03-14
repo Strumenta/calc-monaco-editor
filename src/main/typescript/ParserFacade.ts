@@ -139,3 +139,54 @@ export function validate(input) : Error[] {
     const tree = parser.compilationUnit();
     return errors;
 }
+
+export function parseExpression(input) : any {
+    let errors : Error[] = [];
+
+    const lexer = createLexer(input);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(new ConsoleErrorListener());
+
+    const parser = createParserFromLexer(lexer);
+    parser.removeErrorListeners();
+    parser.addErrorListener(new CollectorErrorListener(errors));
+    parser._errHandler = new CalcErrorStrategy();
+
+    const tree = parser.expression();
+    // @ts-ignore
+    return {'tree': tree, 'errors': errors};
+}
+
+export function evaluateExpressionCode(expressionCode, symbolTable) : any {
+    let r = parseExpression(expressionCode);
+    return evaluateExpressionTree(r.tree, symbolTable, r.tree.parser);
+}
+
+export function evaluateExpressionTree(tree, symbolTable, parser) : any {
+    //console.log("op " + tree.operator);
+    if (tree.symbol != null) {
+        let symbolTypeName = parser.symbolicNames[tree.symbol.type];
+        //console.log("symbolTypeName " + symbolTypeName);
+        if (symbolTypeName == "NUMBER_LIT") {
+            return parseInt(tree.symbol.text)
+        } else {
+            throw "Unable to handle symbol " + symbolTypeName;
+        }
+    } else if (tree.operator == null) {
+        // console.log("CHILDREN " + tree.children.length);
+        // console.log("CHILDREN 0 " + tree.children[0]);
+        // console.log("CHILDREN 0 RULE INDEX " + tree.children[0].ruleIndex);
+        // console.log("CHILDREN 0 SYMBOL " + tree.children[0].symbol.type);
+        // let symbolType = tree.children[0].symbol.type;
+        // let symbolTypeName = tree.parser.symbolicNames[symbolType];
+        // console.log("CHILDREN 0 SYMBOL " + symbolTypeName);
+        return evaluateExpressionTree(tree.children[0], symbolTable, parser);
+    } else {
+        throw "Unable to handle operator " + tree.operator;
+    }
+}
+
+// @ts-ignore
+//window.parseExpression = parseExpression;
+// @ts-ignore
+//window.evaluateExpressionCode = evaluateExpressionCode;
