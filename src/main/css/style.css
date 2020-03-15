@@ -188,3 +188,21 @@ input:invalid {
     color: gray;
     margin-bottom: 10px;
 }
+
+.autocomplete {
+    background-color: #ddf0f0;
+    min-width: 20%;
+    padding: 4px;
+    border: 1px #888 solid;
+}
+
+.autocomplete > div {
+    padding: 3px;
+    background-color: white;
+    margin: 3px;
+}
+
+.autocomplete > div:hover {
+    background-color: #c8d8cb;
+    color: blue;
+}

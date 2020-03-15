@@ -150,15 +150,17 @@ $( document ).ready(function() {
         });
     }
 
-    function autocompleteTriggered(input, text) {
-        input.value = text;
+    function autocompleteTriggered(input, item) {
+        input.value = item.label;
         $(input).inputWidthUpdate(myAutoresizeOptions);
         // $(input).attr("selected-id", item.id);
         // $(input).addClass("selection-done");
     }
 
     function valuesProvider() {
-        return ["A", "B", "C", "doo", "foo"];
+        return [ { label: 'United Kingdom', value: 'UK' },
+            { label: 'United States', value: 'US' }
+        ];
     }
 
     function installAutocomplete(input, valuesProvider) {
@@ -166,7 +168,7 @@ $( document ).ready(function() {
             console.log("keyup autocomplete");
             let text = input.value.toLowerCase();
             console.log("VALUES " + valuesProvider());
-            let matched = valuesProvider().filter(n => n.toLowerCase() == text);
+            let matched = valuesProvider().filter(n => n.label.toLowerCase() == text);
             console.log("TEXT "+text+" MATCHED " + matched);
             if (matched.length == 1) {
                 autocompleteTriggered(input, matched[0]);
@@ -181,7 +183,7 @@ $( document ).ready(function() {
             fetch: function (text, update) {
                 text = text.toLowerCase();
                 //var suggestions = ["A", "B", "C", "doo", "foo"];
-                var suggestions = valuesProvider().filter(n => n.toLowerCase().startsWith(text));
+                var suggestions = valuesProvider().filter(n => n.label.toLowerCase().startsWith(text));
                 update(suggestions);
             },
             onSelect: function (item) {
