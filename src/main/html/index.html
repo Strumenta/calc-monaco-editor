@@ -315,12 +315,38 @@
 		}
 
 		function moveToPrevElement(t) {
-			$(t).prev().focus();
-			let text = $(t).prev().val();
-			let el = $(t).prev()[0];
-			if (el != undefined && el != null) {
-				el.setSelectionRange(text.length, text.length);
-			}
+			console.log("move to prev element");
+			window.t = t;
+			let elConsidered = $(t).prev();
+			do {
+				let tag = elConsidered.prop("tagName");
+				if (tag == "INPUT") {
+					console.log("prev is input");
+					elConsidered.focus();
+					let el = elConsidered[0];
+					if (el != undefined && el.setSelectionRange != null) {
+						el.setSelectionRange(0, 0);
+						let text = elConsidered.val();
+						el.setSelectionRange(text.length, text.length);
+					}
+					return;
+				} else if (tag == "DIV") {
+					console.log("prev is div");
+					if (elConsidered.find("input").length == 0) {
+						elConsidered = findPrev(elConsidered);
+						console.log("prev IS NOW " + elConsidered[0]);
+					} else {
+						console.log("prev is div not empty");
+						return;
+					}
+				} else if (tag == "SPAN") {
+					elConsidered = findPrev(elConsidered);
+					console.log("prev IS NOW " + elConsidered[0]);
+				} else {
+					console.log("prev is unknown " + tag);
+					return;
+				}
+			} while (true);
 		}
 
 		function findNext(n) {
@@ -332,10 +358,19 @@
 			}
 		}
 
+		function findPrev(n) {
+			console.log("PREV WAS " + n[0]);
+			if (n.prev() == undefined) {
+				return undefined;
+			} else {
+				return n.prev();
+			}
+		}
+
 		function moveToNextElement(t) {
 			console.log("move to next element");
 			window.t = t;
-			let next = $(t).next()
+			let next = $(t).next();
 			do {
 				let tag = next.prop("tagName");
 				if (tag == "INPUT") {
