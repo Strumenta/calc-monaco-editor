@@ -7,6 +7,8 @@
   "dependencies": {
     "antlr4": "^4.7.2",
     "autocompleter": "^6.0.2",
+    "html2hscript": "^2.0.1",
+    "virtual-dom": "^2.1.1",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7"
   },

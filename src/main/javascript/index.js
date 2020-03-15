@@ -2,6 +2,13 @@ const CalcTokensProvider = require('../../main-generated/javascript/CalcTokensPr
 const ParserFacade = require('../../main-generated/javascript/ParserFacade.js');
 const Navigation = require('../../main-generated/javascript/Navigation.js');
 const autocomplete = require('autocompleter');
+const hparser = require('html2hscript');
+const createElement = require('virtual-dom/create-element');
+const h = require("virtual-dom/h");
+const diff = require('virtual-dom/diff');
+const patch = require('virtual-dom/patch');
+const dm = require('../../main-generated/javascript/datamodel.js');
+const r = require('../../main-generated/javascript/renderer.js');
 
 if (typeof window === 'undefined') {
 
@@ -9,12 +16,11 @@ if (typeof window === 'undefined') {
     window.CalcTokensProvider = CalcTokensProvider;
 }
 
-console.log("EVAL " + ParserFacade.evaluateExpressionCode("124", {}));
-
-
-
 $( document ).ready(function() {
     window.symbolTable = {};
+
+    window.datamodel = {types:[]};
+
     window.updater = function() {
         $("#inputs .input").each(function () {
             let name = $(this).find(".name").text();
@@ -39,15 +45,65 @@ $( document ).ready(function() {
         $(this).siblings(".section-content").toggleClass("expanded");
     });
 
+    function updateTypes() {
+        console.log("[update types]");
+        //var html = "<div id='types'>";
+        //var typesLeftToRender = window.datamodel.types.length;
+        // let typeRenderCb = function(hscript){
+        //     console.log("typeRenderCb called");
+        //     typesLeftToRender--;
+        //     console.log(hscript);
+        //     //hscript = h("div");
+        //     let updatedDomForType = createElement(hscript, {warn:function(msg, vnode){
+        //             console.warn("ISSUE IN CREATE ELEMENT: " + msg);
+        //             console.warn("  node with issue: " + vnode);
+        //         }});
+        //     console.log("updatedDomForType");
+        //     console.log(updatedDomForType);
+        //     html += updatedDomForType;
+        //     if (typesLeftToRender == 0) {
+        //         html += "</div>";
+        //         console.log("UPDATE TYPES");
+        //         console.log(html);
+        //     }
+        // };
+        var hmodel = h('div', {}, [h("span")]);
+        var newDom = createElement(hmodel);
+        console.log("new dom:");
+        console.log(newDom);
+        let currentDom = $("#types")[0];
+        console.log("current dom:");
+        console.log(currentDom);
+        //$("#types").replaceWith(newDom);
+        var patches = diff(currentDom, newDom);
+        window.patches = patches;
+        console.log("patches");
+        console.log(patches);
+        patch(newDom, patches)
+        // $(window.datamodel.types).each(function () {
+        //     console.log("[rendering a type]");
+        //     //let updatedDomModel = r.render(this, typeRenderCb);
+        //     //let updatedDomForType = createElement(updatedDomModel);
+        //     //console.log(updatedDomForType);
+        //     //html += updatedDomForType;
+        // });
+    }
+
     function addType() {
-        $("#types").siblings(".empty-message").hide();
-        $("#types").append("<div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
-            +"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
-        prepareInputs();
-        $(".add-field-button").click(function () {
-            $(this).siblings(".message").hide();
-            console.log("add field");
-        });
+        //$("#types").siblings(".empty-message").hide();
+        window.datamodel.types.push(new dm.Type());
+        // $(window.datamodel.types).each(function () {
+        //     console.log("[rendering a type]");
+        //     let updatedDom = r.render(this);
+        // });
+        updateTypes();
+        // $("#types").append("<div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
+        //     +"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
+        // prepareInputs();
+        // $(".add-field-button").click(function () {
+        //     $(this).siblings(".message").hide();
+        //     console.log("add field");
+        // });
     }
 
     $("#add-type-button").click(function () {
@@ -227,5 +283,6 @@ $( document ).ready(function() {
         });
     }
 
+    updateTypes();
 
 });
