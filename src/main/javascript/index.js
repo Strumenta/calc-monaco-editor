@@ -92,9 +92,13 @@ $( document ).ready(function() {
         return "<input class='editable' value='" + text + "'>";
     }
 
+    function resolvable(text) {
+        return "<input class='resolvable' placeholder='" + text + "' value=''>";
+    }
+
     function addField(t) {
         $(t).siblings(".fields").find(".message").hide();
-        $(t).siblings(".fields").append(`<div class='field'>${keyword('field')}${editCell('myField')}${keyword('of type')}${editCell('myType')}</div>`)
+        $(t).siblings(".fields").append(`<div class='field'>${keyword('field')}${editCell('myField')}${keyword('of type')}${resolvable('myType')}</div>`)
         prepareInputs();
     }
 
@@ -120,6 +124,7 @@ $( document ).ready(function() {
                 tryToAdd(this);
                 return true;
             }
+            return false;
         });
         $("input.editable").unbind('keydown');
         $("input.editable").on('keydown', function (e) {
@@ -144,7 +149,7 @@ $( document ).ready(function() {
             }
         });
         console.log("prepareInputs");
-        $("input").each(function () {
+        $("input.resolvable").each(function () {
             console.log("install autocomplete");
             installAutocomplete(this, valuesProvider);
         });
@@ -153,13 +158,13 @@ $( document ).ready(function() {
     function autocompleteTriggered(input, item) {
         input.value = item.label;
         $(input).inputWidthUpdate(myAutoresizeOptions);
-        // $(input).attr("selected-id", item.id);
+        $(input).attr("selected-id", item.id);
         // $(input).addClass("selection-done");
     }
 
     function valuesProvider() {
-        return [ { label: 'United Kingdom', value: 'UK' },
-            { label: 'United States', value: 'US' }
+        return [ { label: 'United Kingdom', value: 'UK', id: 'UK' },
+            { label: 'United States', value: 'US', id: 'US' }
         ];
     }
 
@@ -173,7 +178,7 @@ $( document ).ready(function() {
             if (matched.length == 1) {
                 autocompleteTriggered(input, matched[0]);
             } else {
-                //$(input).attr("selected-id", null);
+                $(input).attr("selected-id", null);
                 //$(input).removeClass("selection-done");
             }
         });

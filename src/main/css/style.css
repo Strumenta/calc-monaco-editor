@@ -206,3 +206,11 @@ input:invalid {
     background-color: #c8d8cb;
     color: blue;
 }
+
+input.resolvable {
+    background-color: #FFBDB3;
+}
+
+input.resolvable[selected-id] {
+    background-color: #ccf7cc;
+}
