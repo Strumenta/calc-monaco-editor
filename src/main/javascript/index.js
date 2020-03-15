@@ -83,54 +83,6 @@ $( document ).ready(function() {
         $("input").autoresize(myAutoresizeOptions);
     }
 
-    function moveToPrevElement(t) {
-        console.log("move to prev element");
-        window.t = t;
-        let elConsidered = $(t).prev();
-        do {
-            let tag = elConsidered.prop("tagName");
-            if (tag == "INPUT") {
-                console.log("prev is input");
-                elConsidered.focus();
-                let el = elConsidered[0];
-                if (el != undefined && el.setSelectionRange != null) {
-                    el.setSelectionRange(0, 0);
-                    let text = elConsidered.val();
-                    el.setSelectionRange(text.length, text.length);
-                }
-                return;
-            } else if (tag == "DIV") {
-                console.log("prev is div");
-                if (elConsidered.find("input").length == 0) {
-                    elConsidered = findPrev(elConsidered);
-                    console.log("prev IS NOW " + elConsidered[0]);
-                } else {
-                    console.log("prev is div not empty");
-                    return;
-                }
-            } else if (tag == "SPAN") {
-                elConsidered = findPrev(elConsidered);
-                console.log("prev IS NOW " + elConsidered[0]);
-            } else {
-                console.log("prev is unknown " + tag);
-                return;
-            }
-        } while (true);
-    }
-
-
-    function findPrev(n) {
-        console.log("PREV WAS " + n[0]);
-        if (n.prev() == undefined) {
-            return undefined;
-        } else {
-            return n.prev();
-        }
-    }
-
-
-
-
     function keyword(text) {
         return "<input class='keyword' value='" + text + "'>";
     }
@@ -160,7 +112,7 @@ $( document ).ready(function() {
                 return true;
             } else if (e.key == "ArrowLeft") {
                 e.preventDefault();
-                moveToPrevElement(this);
+                Navigation.moveToPrevElement(this);
                 return true;
             } else if (e.key == "Enter") {
                 e.preventDefault();
@@ -179,7 +131,7 @@ $( document ).ready(function() {
             } else if (e.key == "ArrowLeft") {
                 if (this.selectionStart == 0) {
                     e.preventDefault();
-                    moveToPrevElement(this);
+                    Navigation.moveToPrevElement(this);
                     return true;
                 }
             } else if (e.key == "Enter") {

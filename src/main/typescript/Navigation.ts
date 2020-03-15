@@ -6,6 +6,14 @@ function moveFocusToStart(next) {
     }
 }
 
+function moveFocusToEnd(next) {
+    next.focus();
+    let el = next[0];
+    if (el != undefined && el.setSelectionRange != null) {
+        let text = next.val();
+        el.setSelectionRange(text.length, text.length);
+    }
+}
 
 function findNext(n) {
     console.log("NEXT WAS " + n[0]);
@@ -52,4 +60,54 @@ export function moveToNextElement(t) {
             return;
         }
     } while (true);
+}
+
+export function moveToPrevElement(t) {
+    console.log("move to prev element");
+    // @ts-ignore
+    let elConsidered = $(t).prev();
+
+    do {
+        if (elConsidered.length == 0) {
+            // @ts-ignore
+            moveToPrevElement($(t).parent());
+            return;
+        }
+        let tag = elConsidered.prop("tagName");
+        if (tag == "INPUT") {
+            console.log("prev is input");
+            moveFocusToEnd(elConsidered);
+            return;
+        } else if (tag == "DIV") {
+            console.log("prev is div");
+            if (elConsidered.find("input").length == 0) {
+                elConsidered = findPrev(elConsidered);
+                console.log("prev IS NOW " + elConsidered[0]);
+            } else {
+                elConsidered = elConsidered.find("input").last();
+                console.log("  PREV IS NOW input child " + elConsidered[0] + " "+elConsidered.length);
+                console.log(elConsidered[0]);
+                moveFocusToEnd(elConsidered);
+                return;
+            }
+        } else if (tag == "SPAN") {
+            elConsidered = findPrev(elConsidered);
+            console.log("prev IS NOW " + elConsidered[0]);
+        } else if (tag == "BR") {
+            elConsidered = elConsidered.prev();
+        } else {
+            console.log("prev is unknown " + tag);
+            return;
+        }
+    } while (true);
+}
+
+
+function findPrev(n) {
+    console.log("PREV WAS " + n[0]);
+    if (n.prev() == undefined) {
+        return undefined;
+    } else {
+        return n.prev();
+    }
 }
