@@ -26,3 +26,8 @@ cd server
 ```
 
 Now visit http://localhost:8888
+
+## Using
+
+JQuery
+https://github.com/kraaden/autocomplete

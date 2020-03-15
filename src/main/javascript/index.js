@@ -1,6 +1,7 @@
 const CalcTokensProvider = require('../../main-generated/javascript/CalcTokensProvider.js');
 const ParserFacade = require('../../main-generated/javascript/ParserFacade.js');
 const Navigation = require('../../main-generated/javascript/Navigation.js');
+const autocomplete = require('autocompleter');
 
 if (typeof window === 'undefined') {
 
@@ -140,6 +141,51 @@ $( document ).ready(function() {
                 return true;
             } else {
                 //console.log("K " + e.key);
+            }
+        });
+        console.log("prepareInputs");
+        $("input").each(function () {
+            console.log("install autocomplete");
+            installAutocomplete(this, valuesProvider);
+        });
+    }
+
+    function autocompleteTriggered(input, text) {
+        input.value = text;
+        $(input).inputWidthUpdate(myAutoresizeOptions);
+        // $(input).attr("selected-id", item.id);
+        // $(input).addClass("selection-done");
+    }
+
+    function valuesProvider() {
+        return ["A", "B", "C", "doo", "foo"];
+    }
+
+    function installAutocomplete(input, valuesProvider) {
+        $(input).keyup(function(){
+            console.log("keyup autocomplete");
+            let text = input.value.toLowerCase();
+            console.log("VALUES " + valuesProvider());
+            let matched = valuesProvider().filter(n => n.toLowerCase() == text);
+            console.log("TEXT "+text+" MATCHED " + matched);
+            if (matched.length == 1) {
+                autocompleteTriggered(input, matched[0]);
+            } else {
+                //$(input).attr("selected-id", null);
+                //$(input).removeClass("selection-done");
+            }
+        });
+        autocomplete({
+            input: input,
+            minLength: 0,
+            fetch: function (text, update) {
+                text = text.toLowerCase();
+                //var suggestions = ["A", "B", "C", "doo", "foo"];
+                var suggestions = valuesProvider().filter(n => n.toLowerCase().startsWith(text));
+                update(suggestions);
+            },
+            onSelect: function (item) {
+                autocompleteTriggered(input, item);
             }
         });
     }
