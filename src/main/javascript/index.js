@@ -156,10 +156,28 @@ $( document ).ready(function() {
     }
 
     function autocompleteTriggered(input, item) {
-        input.value = item.label;
-        $(input).inputWidthUpdate(myAutoresizeOptions);
-        $(input).attr("selected-id", item.id);
+        if (item.transformation != undefined) {
+            item.transformation(input, item);
+        } else {
+            input.value = item.label;
+            $(input).inputWidthUpdate(myAutoresizeOptions);
+            $(input).attr("selected-id", item.id);
+        }
     }
+
+    let replaceWithSequence = function (input, item) {
+        console.log("replaceWithSequence");
+        let group = document.createElement("span");
+        group.className = 'group';
+        // $(group).append(keyword("sequence of ("));
+        // let r = document.createElement("input");
+        //
+        $(group).append(`${keyword("sequence of (")}${resolvable('myType', 'type')}${keyword(")")}`);
+        $(input).replaceWith(group);
+        $(group).find("input[role='type']").first().focus();
+        //$(input).replaceWith(`<span class="group">${keyword("sequence of (")}${resolvable('myType', 'type')}${keyword(")")}<span>`);
+        prepareInputs();
+    };
 
     function valuesProvider(input) {
         let role = $(input).attr("role");
@@ -171,7 +189,7 @@ $( document ).ready(function() {
                 { label: 'boolean', value: 'boolean', id: 'boolean'},
                 { label: 'integer', value: 'integer', id: 'integer'},
                 { label: 'decimal', value: 'decimal', id: 'decimal'},
-                { label: 'sequence', value: 'sequence', id: 'sequence'},
+                { label: 'sequence', value: 'sequence', id: 'sequence', transformation: replaceWithSequence},
             ];
         };
         return [
