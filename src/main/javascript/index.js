@@ -92,13 +92,13 @@ $( document ).ready(function() {
         return "<input class='editable' value='" + text + "'>";
     }
 
-    function resolvable(text) {
-        return "<input class='resolvable' placeholder='" + text + "' value=''>";
+    function resolvable(text, role) {
+        return "<input class='resolvable' placeholder='" + text + "' value='' role='" + role + "'>";
     }
 
     function addField(t) {
         $(t).siblings(".fields").find(".message").hide();
-        $(t).siblings(".fields").append(`<div class='field'>${keyword('field')}${editCell('myField')}${keyword('of type')}${resolvable('myType')}</div>`)
+        $(t).siblings(".fields").append(`<div class='field'>${keyword('field')}${editCell('myField')}${keyword('of type')}${resolvable('myType', 'type')}</div>`)
         prepareInputs();
     }
 
@@ -159,11 +159,23 @@ $( document ).ready(function() {
         input.value = item.label;
         $(input).inputWidthUpdate(myAutoresizeOptions);
         $(input).attr("selected-id", item.id);
-        // $(input).addClass("selection-done");
     }
 
-    function valuesProvider() {
-        return [ { label: 'United Kingdom', value: 'UK', id: 'UK' },
+    function valuesProvider(input) {
+        let role = $(input).attr("role");
+        console.log('values provider, role=' + role+", matched? "+ (role=='type'));
+        window.vp = input;
+        if (role == 'type') {
+            return [
+                { label: 'string', value: 'string', id: 'string'},
+                { label: 'boolean', value: 'boolean', id: 'boolean'},
+                { label: 'integer', value: 'integer', id: 'integer'},
+                { label: 'decimal', value: 'decimal', id: 'decimal'},
+                { label: 'sequence', value: 'sequence', id: 'sequence'},
+            ];
+        };
+        return [
+            { label: 'United Kingdom', value: 'UK', id: 'UK' },
             { label: 'United States', value: 'US', id: 'US' }
         ];
     }
@@ -172,8 +184,8 @@ $( document ).ready(function() {
         $(input).keyup(function(){
             console.log("keyup autocomplete");
             let text = input.value.toLowerCase();
-            console.log("VALUES " + valuesProvider());
-            let matched = valuesProvider().filter(n => n.label.toLowerCase() == text);
+            console.log("VALUES " + valuesProvider(input));
+            let matched = valuesProvider(input).filter(n => n.label.toLowerCase() == text);
             console.log("TEXT "+text+" MATCHED " + matched);
             if (matched.length == 1) {
                 autocompleteTriggered(input, matched[0]);
@@ -188,7 +200,7 @@ $( document ).ready(function() {
             fetch: function (text, update) {
                 text = text.toLowerCase();
                 //var suggestions = ["A", "B", "C", "doo", "foo"];
-                var suggestions = valuesProvider().filter(n => n.label.toLowerCase().startsWith(text));
+                var suggestions = valuesProvider(input).filter(n => n.label.toLowerCase().startsWith(text));
                 update(suggestions);
             },
             onSelect: function (item) {
