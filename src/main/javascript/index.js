@@ -9,6 +9,7 @@ const diff = require('virtual-dom/diff');
 const patch = require('virtual-dom/patch');
 const dm = require('../../main-generated/javascript/datamodel.js');
 const r = require('../../main-generated/javascript/renderer.js');
+const hyperHTML = require('hyperhtml');
 
 if (typeof window === 'undefined') {
 
@@ -34,7 +35,7 @@ $( document ).ready(function() {
             window.symbolTable[name] = value;
             $(this).find(".result").text("result is " + value);
         });
-    }
+    };
 
 
     $("#inputs .input input").change(function(){
@@ -45,8 +46,31 @@ $( document ).ready(function() {
         $(this).siblings(".section-content").toggleClass("expanded");
     });
 
+    function d(item) {
+        return hyperHTML.wire($("#types")[0], `:node-${item.uuid}`) `<div class='type-definition'>
+        <input class='keyword' value='type'> 
+        <input class='editable' value='My type' required> 
+        <input class='keyword' value='{'/>
+        <div class='fields'
+            <span class='message'>no fields</span>
+            <br>
+            <div class='fields-container'></div></div><input class='keyword' value='}'>
+        </div>`;
+    }
+
     function updateTypes() {
         console.log("[update types]");
+        let html = `<span>Nothing to see here</span>`;
+        function r(render) {
+            if (window.datamodel.types.length == 0) {
+                render `<span class="empty-message">No types</span>`
+            } else {
+                render `${window.datamodel.types.map((item,index) => d(item))}`
+            }
+        }
+        window.ht = hyperHTML.bind($("#types")[0]);
+        r(window.ht);
+        prepareInputs();
         //var html = "<div id='types'>";
         //var typesLeftToRender = window.datamodel.types.length;
         // let typeRenderCb = function(hscript){
@@ -67,19 +91,19 @@ $( document ).ready(function() {
         //         console.log(html);
         //     }
         // };
-        var hmodel = h('div', {}, [h("span")]);
-        var newDom = createElement(hmodel);
-        console.log("new dom:");
-        console.log(newDom);
-        let currentDom = $("#types")[0];
-        console.log("current dom:");
-        console.log(currentDom);
-        //$("#types").replaceWith(newDom);
-        var patches = diff(currentDom, newDom);
-        window.patches = patches;
-        console.log("patches");
-        console.log(patches);
-        patch(newDom, patches)
+        // var hmodel = h('div', {}, [h("span")]);
+        // var newDom = createElement(hmodel);
+        // console.log("new dom:");
+        // console.log(newDom);
+        // let currentDom = $("#types")[0];
+        // console.log("current dom:");
+        // console.log(currentDom);
+        // //$("#types").replaceWith(newDom);
+        // var patches = diff(currentDom, newDom);
+        // window.patches = patches;
+        // console.log("patches");
+        // console.log(patches);
+        // patch(newDom, patches)
         // $(window.datamodel.types).each(function () {
         //     console.log("[rendering a type]");
         //     //let updatedDomModel = r.render(this, typeRenderCb);

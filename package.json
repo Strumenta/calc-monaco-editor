@@ -8,6 +8,8 @@
     "antlr4": "^4.7.2",
     "autocompleter": "^6.0.2",
     "html2hscript": "^2.0.1",
+    "hyperhtml": "^2.32.1",
+    "uuid": "^7.0.2",
     "virtual-dom": "^2.1.1",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7"
