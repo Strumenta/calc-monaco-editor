@@ -56,20 +56,6 @@ $( document ).ready(function() {
         $(this).siblings(".section-content").toggleClass("expanded");
     });
 
-    // function placeholderKeydown(adder) {
-    //     return function(e) {
-    //         console.log(`placeholderKeydown ${e.key}`);
-    //         switch (e.key) {
-    //             case "Enter":
-    //                 console.log("adding");
-    //                 adder(e);
-    //                 break;
-    //         }
-    //         e.preventDefault();
-    //         return true;
-    //     };
-    // }
-
     function keydownForKeyActions(keyActions) {
         return function(e) {
             console.log(`keydownForKeyActions keydown ${e.key}`);
@@ -128,7 +114,10 @@ $( document ).ready(function() {
 
     function hEditable(text, keyActions) {
         return h('input.editable', {props: {value:text, required: true},   hook: {
-                insert: addAutoresize
+                insert: function(vnode) {
+                    addAutoresize(vnode);
+                    $(vnode.elm).focus();
+                }
             }, on: {
                 keydown: keydownForKeyActions(merge(keyActions, basicNavigationKeyActions))
             }});
