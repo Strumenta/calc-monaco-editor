@@ -88,6 +88,13 @@ $( document ).ready(function() {
             children.push(h('input.placeholder',
                 {
                     props: {value: '<no types>'},
+                    hook: {
+                        insert: (vnode) => {
+                            console.log("inserting");
+                            $(vnode.elm).autoresize(myAutoresizeOptions);
+                            console.log("inserted");
+                        }
+                    },
                     on: {keydown: placeholderKeydown(addType)}
                 }, []))
         } else {
@@ -96,7 +103,13 @@ $( document ).ready(function() {
             //     //     +"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
                 children.push(h('div.type-definition', {}, [
                     h('div.line', {}, [
-                        h('input.keyword', {props: {value:'type'}}),
+                        h('input.keyword', {props: {value:'type'},   hook: {
+                                insert: (vnode) => {
+                                    console.log("inserting");
+                                    $(vnode.elm).autoresize(myAutoresizeOptions);
+                                    console.log("inserted");
+                                }
+                            }}),
                         h('input.editable', {props: {value:'My type', required: true}}),
                         h('input.keyword', {props: {value:'{'}}),
                     ]),
@@ -116,7 +129,7 @@ $( document ).ready(function() {
         window.typesvnode = patch(window.typesvnode, vnode);
 
 
-        prepareInputs();
+        //prepareInputs();
         //var html = "<div id='types'>";
         //var typesLeftToRender = window.datamodel.types.length;
         // let typeRenderCb = function(hscript){
