@@ -3,26 +3,22 @@ const CalcTokensProvider = require('../../main-generated/javascript/CalcTokensPr
 const ParserFacade = require('../../main-generated/javascript/ParserFacade.js');
 const Navigation = require('../../main-generated/javascript/Navigation.js');
 const autocomplete = require('autocompleter');
-//const hparser = require('html2hscript');
-//const createElement = require('virtual-dom/create-element');
-//const h = require("virtual-dom/h");
-//const diff = require('virtual-dom/diff');
-//const patch = require('virtual-dom/patch');
 const dm = require('../../main-generated/javascript/datamodel.js');
 const r = require('../../main-generated/javascript/renderer.js');
-//const hyperHTML = require('hyperhtml');
-var snabbdom = require('snabbdom');
-var patch = snabbdom.init([ // Init patch function with chosen modules
+
+// Virtual docm
+const snabbdom = require('snabbdom');
+const patch = snabbdom.init([ // Init patch function with chosen modules
     require('snabbdom/modules/class').default, // makes it easy to toggle classes
     require('snabbdom/modules/props').default, // for setting properties on DOM elements
     require('snabbdom/modules/style').default, // handles styling on elements with support for animations
     require('snabbdom/modules/eventlisteners').default, // attaches event listeners
 ]);
-var h = require('snabbdom/h').default; // helper function for creating vnodes
-var toVNode = require('snabbdom/tovnode').default;
+const h = require('snabbdom/h').default; // helper function for creating vnodes
+const toVNode = require('snabbdom/tovnode').default;
+
+// Sound
 var pizzicato = require('Pizzicato');
-
-
 
 
 if (typeof window === 'undefined') {
@@ -34,33 +30,30 @@ if (typeof window === 'undefined') {
 $( document ).ready(function() {
 
     window.errorSound = new pizzicato.Sound('./audio/327738__distillerystudio__error-01.wav', function() {
-        // Sound loaded!
-        //errorSound.play();
     });
 
-    window.symbolTable = {};
+    //window.symbolTable = {};
 
     window.datamodel = {types:[]};
 
-    window.updater = function() {
-        $("#inputs .input").each(function () {
-            let name = $(this).find(".name").text();
-            let value = parseInt($(this).find("input").val());
-            window.symbolTable[name] = value;
-        });
-        $("#calculations .calculation").each(function () {
-            let name = $(this).find(".name").text();
-            let code = window.editors[name].getValue();
-            let value = ParserFacade.evaluateExpressionCode(code, window.symbolTable);
-            window.symbolTable[name] = value;
-            $(this).find(".result").text("result is " + value);
-        });
-    };
+    // window.updater = function() {
+    //     $("#inputs .input").each(function () {
+    //         let name = $(this).find(".name").text();
+    //         let value = parseInt($(this).find("input").val());
+    //         window.symbolTable[name] = value;
+    //     });
+    //     $("#calculations .calculation").each(function () {
+    //         let name = $(this).find(".name").text();
+    //         let code = window.editors[name].getValue();
+    //         let value = ParserFacade.evaluateExpressionCode(code, window.symbolTable);
+    //         window.symbolTable[name] = value;
+    //         $(this).find(".result").text("result is " + value);
+    //     });
+    // };
 
-
-    $("#inputs .input input").change(function(){
-        window.updater();
-    });
+    // $("#inputs .input input").change(function(){
+    //     window.updater();
+    // });
 
     $(".collapsible").click(function() {
         $(this).siblings(".section-content").toggleClass("expanded");
@@ -89,6 +82,16 @@ $( document ).ready(function() {
         "ArrowLeft": function(e) {
             e.preventDefault();
             Navigation.moveToPrevElement(e.target);
+            return true;
+        },
+        "ArrowUp": function(e) {
+            e.preventDefault();
+            Navigation.moveUp(e.target);
+            return true;
+        },
+        "ArrowDown": function(e) {
+            e.preventDefault();
+            Navigation.moveDown(e.target);
             return true;
         },
     };
@@ -214,28 +217,6 @@ $( document ).ready(function() {
 
     }
 
-    // function addType() {
-    //     //$("#types").siblings(".empty-message").hide();
-    //     window.datamodel.types.push(new dm.Type("A type"));
-    //     // $(window.datamodel.types).each(function () {
-    //     //     console.log("[rendering a type]");
-    //     //     let updatedDom = r.render(this);
-    //     // });
-    //     updateTypes();
-    //     // $("#types").append("<div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
-    //     //     +"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
-    //     // prepareInputs();
-    //     // $(".add-field-button").click(function () {
-    //     //     $(this).siblings(".message").hide();
-    //     //     console.log("add field");
-    //     // });
-    // }
-
-    $("#add-type-button").click(function () {
-        addType();
-    });
-
-
     $.fn.textWidth = function(_text, _font){
         var textToConsider = _text || this.val();
         if (textToConsider == "") {
@@ -265,27 +246,12 @@ $( document ).ready(function() {
         $("input").autoresize(myAutoresizeOptions);
     }
 
-    function keyword(text) {
-        return "<input class='keyword' value='" + text + "'>";
-    }
-
-    function editCell(text) {
-        return "<input class='editable' value='" + text + "'>";
-    }
-
-    function resolvable(text, role) {
-        return "<input class='resolvable' placeholder='" + text + "' value='' role='" + role + "'>";
-    }
-
     function addField(t) {
         $(t).siblings(".fields").find(".message").hide();
         $(t).siblings(".fields").append(`<div class='field'>${keyword('field')}${editCell('myField')}${keyword('of type')}${resolvable('myType', 'type')}</div>`)
         prepareInputs();
     }
 
-    function tryToAdd(t) {
-        addField(t);
-    }
 
     function prepareInputs() {
         installAutoresize();

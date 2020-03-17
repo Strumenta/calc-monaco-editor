@@ -24,6 +24,23 @@ function findNext(n) {
     }
 }
 
+export function moveUp(t) {
+    // @ts-ignore
+    const l = $(t).closest(".line");
+    if (l.length == 0) {
+        console.warn("no line found");
+    } else if (l.length > 1) {
+        console.warn("too many lines found");
+    } else {
+        console.log("element found");
+        We must find the previous line and pick the first element there
+    }
+}
+
+export function moveDown(t) {
+
+}
+
 export function moveToNextElement(t) {
     //console.log("move to next element");
     // @ts-ignore
