@@ -81,45 +81,68 @@ $( document ).ready(function() {
         };
     }
 
-    function updateTypes() {
-        console.log("[update types]");
-        let children = [];
-        if (window.datamodel.types.length == 0) {
-            children.push(h('input.placeholder',
-                {
-                    props: {value: '<no types>'},
-                    hook: {
-                        insert: (vnode) => {
-                            console.log("inserting");
-                            $(vnode.elm).autoresize(myAutoresizeOptions);
-                            console.log("inserted");
-                        }
-                    },
-                    on: {keydown: placeholderKeydown(addType)}
-                }, []))
-        } else {
-            $(window.datamodel.types).each(function () {
-            // <div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
-            //     //     +"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
-                children.push(h('div.type-definition', {}, [
-                    h('div.line', {}, [
-                        h('input.keyword', {props: {value:'type'},   hook: {
-                                insert: (vnode) => {
-                                    console.log("inserting");
-                                    $(vnode.elm).autoresize(myAutoresizeOptions);
-                                    console.log("inserted");
-                                }
-                            }}),
-                        h('input.editable', {props: {value:'My type', required: true}}),
-                        h('input.keyword', {props: {value:'{'}}),
-                    ]),
-                    h('div.line', {}, [
+    function hKeyword(text) {
+        return h('input.keyword', {props: {value:text},   hook: {
+                insert: addAutoresize
+            }});
+    }
 
-                    ])
-                ]));
+    function hLine(children) {
+        return h('div.line', {}, children);
+    }
+
+    function addAutoresize(vnode) {
+        $(vnode.elm).autoresize(myAutoresizeOptions);
+    }
+
+    function hPlaceholder(text, insertion) {
+        return h('input.placeholder',
+            {
+                props: {value: '<' + text + '>'},
+                hook: { insert: insertion },
+                on: {keydown: placeholderKeydown(addType)}
+            }, []);
+    }
+
+    function hEditable(text) {
+        return h('input.editable', {props: {value:text, required: true},   hook: {
+                insert: addAutoresize
+            }});
+    }
+
+    function hChildrenList(list, ifEmpty, forElement) {
+        let children = [];
+        if (list.length == 0) {
+            children.push(ifEmpty());
+        } else {
+            $(list).each(function () {
+               children.push(forElement(this));
             });
         }
-        let vnode = h('div#types', {}, children);
+        return children;
+    }
+
+    function updateTypes() {
+        console.log("[update types]");
+
+        let vnode = h('div#types', {}, hChildrenList(
+            window.datamodel.types,
+            function () {
+                return hLine([
+                    hPlaceholder('no types', addAutoresize)]);
+            },
+            function () {
+                return h('div.type-definition', {}, [
+                    hLine([
+                        hKeyword('text'),
+                        hEditable('My type'),
+                        hKeyword('{'),
+                    ]),
+                    hLine([
+                        hKeyword('}'),
+                    ])])
+            })
+        );
         // Patch into empty DOM element – this modifies the DOM as a side effect
 
         if (window.typesvnode == undefined) {
