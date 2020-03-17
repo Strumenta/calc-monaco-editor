@@ -1,4 +1,3 @@
-import {moveToNextElement} from "../typescript/Navigation";
 
 const CalcTokensProvider = require('../../main-generated/javascript/CalcTokensProvider.js');
 const ParserFacade = require('../../main-generated/javascript/ParserFacade.js');
@@ -74,13 +73,22 @@ $( document ).ready(function() {
     function keydownForKeyActions(keyActions) {
         return function(e) {
             console.log(`keydownForKeyActions keydown ${e.key}`);
+            window.k = e.key;
+            window.a = keyActions;
+            console.log("key actions: " + keyActions);
             if (keyActions != undefined && keyActions[e.key] != undefined) {
+                console.log("Action found for " + e.key);
                 keyActions[e.key](e);
             }
             e.preventDefault();
             return true;
         };
     }
+
+    let basicNavigationKeyActions = {
+        "ArrowRight": function(e) { Navigation.moveToNextElement(e.target);},
+        "ArrowLeft": function(e) { Navigation.moveToPrevElement(e.target);},
+    };
 
     function hKeyword(text, keyActions) {
         return h('input.keyword', {
@@ -89,7 +97,7 @@ $( document ).ready(function() {
                 insert: addAutoresize
             },
             on: {
-                keydown: merge(keydownForKeyActions(keyActions), { "ArrowRight": moveToNextElement})
+                keydown: keydownForKeyActions(merge(keyActions, basicNavigationKeyActions))
             }
         });
     }
@@ -118,9 +126,11 @@ $( document ).ready(function() {
             }, []);
     }
 
-    function hEditable(text) {
+    function hEditable(text, keyActions) {
         return h('input.editable', {props: {value:text, required: true},   hook: {
                 insert: addAutoresize
+            }, on: {
+                keydown: keydownForKeyActions(merge(keyActions, basicNavigationKeyActions))
             }});
     }
 
