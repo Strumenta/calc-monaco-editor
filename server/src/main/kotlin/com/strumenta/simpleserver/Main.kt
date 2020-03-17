@@ -24,6 +24,9 @@ fun main(args: Array<String>) {
             static("node_modules") {
                 files("../node_modules")
             }
+            static("audio") {
+                files("../audio")
+            }
             get("/") {
                 try {
                     val text = File("../src/main/html/index.html").readText(Charsets.UTF_8)

@@ -25,15 +25,25 @@ function findNext(n) {
 }
 
 export function moveToNextElement(t) {
-    console.log("move to next element");
+    //console.log("move to next element");
     // @ts-ignore
     let next = $(t).next();
     if (next.length == 0) {
         // @ts-ignore
+        //console.log("no next brother, moving up to parent", $(t).parent());
+        // @ts-ignore
+        var parent = $(t).parent();
+        if ((parent).hasClass("editor")) {
+            // cannot move outside the editor;
+            // @ts-ignore
+            window.errorSound.play();
+            return false;
+        }
+        // @ts-ignore
         moveToNextElement($(t).parent());
         return;
     }
-    console.log("NEXT CALCULATED AS " + next.length);
+    //console.log("NEXT CALCULATED AS " + next.length);
     do {
         let tag = next.prop("tagName");
         if (tag == "INPUT") {
@@ -41,29 +51,29 @@ export function moveToNextElement(t) {
             moveFocusToStart(next);
             return;
         } else if (tag == "DIV") {
-            console.log("  next is div");
+            //console.log("  next is div");
             if (next.find("input").length == 0) {
                 next = findNext(next);
-                console.log("  NEXT IS NOW " + next[0]);
+                //console.log("  NEXT IS NOW " + next[0]);
             } else {
                 next = next.find("input").first();
-                console.log("  NEXT IS NOW input child " + next[0] + " "+next.length);
-                console.log(next[0]);
+                //console.log("  NEXT IS NOW input child " + next[0] + " "+next.length);
+                //console.log(next[0]);
                 moveFocusToStart(next);
                 return;
             }
         } else if (tag == "SPAN") {
             next = findNext(next);
-            console.log("  (span) NEXT IS NOW " + next[0]);
+            //console.log("  (span) NEXT IS NOW " + next[0]);
         } else {
-            console.log("  next is unknown " + tag);
+            //console.log("  next is unknown " + tag);
             return;
         }
     } while (true);
 }
 
 export function moveToPrevElement(t) {
-    console.log("move to prev element");
+    //console.log("move to prev element");
     // @ts-ignore
     let elConsidered = $(t).prev();
 
@@ -75,28 +85,30 @@ export function moveToPrevElement(t) {
         }
         let tag = elConsidered.prop("tagName");
         if (tag == "INPUT") {
-            console.log("prev is input");
+            //console.log("prev is input");
             moveFocusToEnd(elConsidered);
             return;
         } else if (tag == "DIV") {
-            console.log("prev is div");
+            //console.log("prev is div");
             if (elConsidered.find("input").length == 0) {
                 elConsidered = findPrev(elConsidered);
-                console.log("prev IS NOW " + elConsidered[0]);
+                //console.log("prev IS NOW " + elConsidered[0]);
             } else {
                 elConsidered = elConsidered.find("input").last();
-                console.log("  PREV IS NOW input child " + elConsidered[0] + " "+elConsidered.length);
-                console.log(elConsidered[0]);
+                //console.log("  PREV IS NOW input child " + elConsidered[0] + " "+elConsidered.length);
+                //console.log(elConsidered[0]);
                 moveFocusToEnd(elConsidered);
                 return;
             }
         } else if (tag == "SPAN") {
             elConsidered = findPrev(elConsidered);
-            console.log("prev IS NOW " + elConsidered[0]);
+            //console.log("prev IS NOW " + elConsidered[0]);
         } else if (tag == "BR") {
             elConsidered = elConsidered.prev();
         } else {
-            console.log("prev is unknown " + tag);
+            //console.log("prev is unknown " + tag);
+            // @ts-ignore
+            window.errorSound.play();
             return;
         }
     } while (true);

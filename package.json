@@ -11,6 +11,7 @@
     "hyperhtml": "^2.32.1",
     "maquette": "^3.3.6",
     "npm": "^6.14.2",
+    "pizzicato": "^0.6.4",
     "snabbdom": "^0.7.4",
     "uuid": "^7.0.2",
     "virtual-dom": "^2.1.1",

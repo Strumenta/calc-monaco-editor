@@ -20,6 +20,10 @@ var patch = snabbdom.init([ // Init patch function with chosen modules
 ]);
 var h = require('snabbdom/h').default; // helper function for creating vnodes
 var toVNode = require('snabbdom/tovnode').default;
+var pizzicato = require('Pizzicato');
+
+
+
 
 if (typeof window === 'undefined') {
 
@@ -28,6 +32,12 @@ if (typeof window === 'undefined') {
 }
 
 $( document ).ready(function() {
+
+    window.errorSound = new pizzicato.Sound('./audio/327738__distillerystudio__error-01.wav', function() {
+        // Sound loaded!
+        //errorSound.play();
+    });
+
     window.symbolTable = {};
 
     window.datamodel = {types:[]};
@@ -58,22 +68,50 @@ $( document ).ready(function() {
 
     function keydownForKeyActions(keyActions) {
         return function(e) {
-            console.log(`keydownForKeyActions keydown ${e.key}`);
+            //console.log(`keydownForKeyActions keydown ${e.key}`);
             window.k = e.key;
             window.a = keyActions;
-            console.log("key actions: " + keyActions);
+            //console.log("key actions: " + keyActions);
             if (keyActions != undefined && keyActions[e.key] != undefined) {
-                console.log("Action found for " + e.key);
-                keyActions[e.key](e);
+                //console.log("Action found for " + e.key);
+                return keyActions[e.key](e);
             }
-            e.preventDefault();
             return true;
         };
     }
 
-    let basicNavigationKeyActions = {
-        "ArrowRight": function(e) { Navigation.moveToNextElement(e.target);},
-        "ArrowLeft": function(e) { Navigation.moveToPrevElement(e.target);},
+    let basicNavigationKeyActionsForKeyword = {
+        "ArrowRight": function(e) {
+            e.preventDefault();
+            Navigation.moveToNextElement(e.target);
+            return true;
+        },
+        "ArrowLeft": function(e) {
+            e.preventDefault();
+            Navigation.moveToPrevElement(e.target);
+            return true;
+        },
+    };
+
+    let basicNavigationKeyActionsForEditable = {
+        "ArrowRight": function(e) {
+            if (e.target.selectionStart == $(e.target).val().length) {
+                e.preventDefault();
+                Navigation.moveToNextElement(e.target);
+                return true;
+            } else {
+                return true;
+            }
+        },
+        "ArrowLeft": function(e) {
+            if (e.target.selectionStart == 0) {
+                e.preventDefault();
+                Navigation.moveToPrevElement(e.target);
+                return true;
+            } else {
+                return true;
+            }
+        },
     };
 
     function hKeyword(text, keyActions) {
@@ -83,7 +121,7 @@ $( document ).ready(function() {
                 insert: addAutoresize
             },
             on: {
-                keydown: keydownForKeyActions(merge(keyActions, basicNavigationKeyActions))
+                keydown: keydownForKeyActions(merge(keyActions, basicNavigationKeyActionsForKeyword))
             }
         });
     }
@@ -119,7 +157,7 @@ $( document ).ready(function() {
                     $(vnode.elm).focus();
                 }
             }, on: {
-                keydown: keydownForKeyActions(merge(keyActions, basicNavigationKeyActions))
+                keydown: keydownForKeyActions(merge(keyActions, basicNavigationKeyActionsForEditable))
             }});
     }
 
@@ -146,7 +184,7 @@ $( document ).ready(function() {
     function updateTypes() {
         console.log("[update types]");
 
-        let vnode = h('div#types', {}, hChildrenList(
+        let vnode = h('div#types.editor', {}, hChildrenList(
             window.datamodel.types,
             function () {
                 return hLine([
