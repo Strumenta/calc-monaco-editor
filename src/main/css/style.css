@@ -179,6 +179,11 @@ input:invalid {
     color: darkblue;
 }
 
+.placeholder {
+    font-style: italic;
+    color: #555;
+}
+
 .fields {
     margin-left: 30px;
 }

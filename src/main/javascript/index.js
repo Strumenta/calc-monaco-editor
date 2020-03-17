@@ -2,14 +2,23 @@ const CalcTokensProvider = require('../../main-generated/javascript/CalcTokensPr
 const ParserFacade = require('../../main-generated/javascript/ParserFacade.js');
 const Navigation = require('../../main-generated/javascript/Navigation.js');
 const autocomplete = require('autocompleter');
-const hparser = require('html2hscript');
-const createElement = require('virtual-dom/create-element');
-const h = require("virtual-dom/h");
-const diff = require('virtual-dom/diff');
-const patch = require('virtual-dom/patch');
+//const hparser = require('html2hscript');
+//const createElement = require('virtual-dom/create-element');
+//const h = require("virtual-dom/h");
+//const diff = require('virtual-dom/diff');
+//const patch = require('virtual-dom/patch');
 const dm = require('../../main-generated/javascript/datamodel.js');
 const r = require('../../main-generated/javascript/renderer.js');
-const hyperHTML = require('hyperhtml');
+//const hyperHTML = require('hyperhtml');
+var snabbdom = require('snabbdom');
+var patch = snabbdom.init([ // Init patch function with chosen modules
+    require('snabbdom/modules/class').default, // makes it easy to toggle classes
+    require('snabbdom/modules/props').default, // for setting properties on DOM elements
+    require('snabbdom/modules/style').default, // handles styling on elements with support for animations
+    require('snabbdom/modules/eventlisteners').default, // attaches event listeners
+]);
+var h = require('snabbdom/h').default; // helper function for creating vnodes
+var toVNode = require('snabbdom/tovnode').default;
 
 if (typeof window === 'undefined') {
 
@@ -58,18 +67,55 @@ $( document ).ready(function() {
         </div>`;
     }
 
+    function placeholderKeydown(adder) {
+        return function(e) {
+            console.log(`placeholderKeydown ${e.key}`);
+            switch (e.key) {
+                case "Enter":
+                    console.log("adding");
+                    adder(e);
+                    break;
+            }
+            e.preventDefault();
+            return true;
+        };
+    }
+
     function updateTypes() {
         console.log("[update types]");
-        let html = `<span>Nothing to see here</span>`;
-        function r(render) {
-            if (window.datamodel.types.length == 0) {
-                render `<span class="empty-message">No types</span>`
-            } else {
-                render `${window.datamodel.types.map((item,index) => d(item))}`
-            }
+        let children = [];
+        if (window.datamodel.types.length == 0) {
+            children.push(h('input.placeholder',
+                {
+                    props: {value: '<no types>'},
+                    on: {keydown: placeholderKeydown(addType)}
+                }, []))
+        } else {
+            $(window.datamodel.types).each(function () {
+            // <div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
+            //     //     +"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
+                children.push(h('div.type-definition', {}, [
+                    h('div.line', {}, [
+                        h('input.keyword', {props: {value:'type'}}),
+                        h('input.editable', {props: {value:'My type', required: true}}),
+                        h('input.keyword', {props: {value:'{'}}),
+                    ]),
+                    h('div.line', {}, [
+
+                    ])
+                ]));
+            });
         }
-        window.ht = hyperHTML.bind($("#types")[0]);
-        r(window.ht);
+        let vnode = h('div#types', {}, children);
+        // Patch into empty DOM element – this modifies the DOM as a side effect
+
+        if (window.typesvnode == undefined) {
+            window.typesvnode = toVNode($("#types")[0]);
+        }
+
+        window.typesvnode = patch(window.typesvnode, vnode);
+
+
         prepareInputs();
         //var html = "<div id='types'>";
         //var typesLeftToRender = window.datamodel.types.length;
@@ -189,50 +235,68 @@ $( document ).ready(function() {
 
     function prepareInputs() {
         installAutoresize();
-        $("input.keyword").unbind('keydown');
-        $("input.keyword").on('keydown', function (e) {
-            if (e.key == "ArrowRight") {
-                e.preventDefault();
-                Navigation.moveToNextElement(this);
-                return true;
-            } else if (e.key == "ArrowLeft") {
-                e.preventDefault();
-                Navigation.moveToPrevElement(this);
-                return true;
-            } else if (e.key == "Enter") {
-                e.preventDefault();
-                tryToAdd(this);
-                return true;
-            }
-            return false;
-        });
-        $("input.editable").unbind('keydown');
-        $("input.editable").on('keydown', function (e) {
-            if (e.key == "ArrowRight") {
-                if (this.selectionStart == $(this).val().length) {
-                    e.preventDefault();
-                    Navigation.moveToNextElement(this);
-                    return true;
-                }
-            } else if (e.key == "ArrowLeft") {
-                if (this.selectionStart == 0) {
-                    e.preventDefault();
-                    Navigation.moveToPrevElement(this);
-                    return true;
-                }
-            } else if (e.key == "Enter") {
-                e.preventDefault();
-                tryToAdd(this);
-                return true;
-            } else {
-                //console.log("K " + e.key);
-            }
-        });
-        console.log("prepareInputs");
-        $("input.resolvable").each(function () {
-            console.log("install autocomplete");
-            installAutocomplete(this, valuesProvider);
-        });
+        // $("input.keyword").unbind('keydown');
+        // $("input.placeholder").on('keydown', function (e) {
+        //     if (e.key == "ArrowRight") {
+        //         console.log("->");
+        //         e.preventDefault();
+        //         Navigation.moveToNextElement(this);
+        //         return true;
+        //     } else if (e.key == "ArrowLeft") {
+        //         e.preventDefault();
+        //         Navigation.moveToPrevElement(this);
+        //         return true;
+        //     } else if (e.key == "Enter") {
+        //         console.log("enter");
+        //         e.preventDefault();
+        //         tryToAdd(this);
+        //         return true;
+        //     }
+        //     return false;
+        // });
+        // $("input.keyword").on('keydown', function (e) {
+        //     if (e.key == "ArrowRight") {
+        //         e.preventDefault();
+        //         Navigation.moveToNextElement(this);
+        //         return true;
+        //     } else if (e.key == "ArrowLeft") {
+        //         e.preventDefault();
+        //         Navigation.moveToPrevElement(this);
+        //         return true;
+        //     } else if (e.key == "Enter") {
+        //         e.preventDefault();
+        //         tryToAdd(this);
+        //         return true;
+        //     }
+        //     return false;
+        // });
+        // $("input.editable").unbind('keydown');
+        // $("input.editable").on('keydown', function (e) {
+        //     if (e.key == "ArrowRight") {
+        //         if (this.selectionStart == $(this).val().length) {
+        //             e.preventDefault();
+        //             Navigation.moveToNextElement(this);
+        //             return true;
+        //         }
+        //     } else if (e.key == "ArrowLeft") {
+        //         if (this.selectionStart == 0) {
+        //             e.preventDefault();
+        //             Navigation.moveToPrevElement(this);
+        //             return true;
+        //         }
+        //     } else if (e.key == "Enter") {
+        //         e.preventDefault();
+        //         tryToAdd(this);
+        //         return true;
+        //     } else {
+        //         //console.log("K " + e.key);
+        //     }
+        // });
+        // console.log("prepareInputs");
+        // $("input.resolvable").each(function () {
+        //     console.log("install autocomplete");
+        //     installAutocomplete(this, valuesProvider);
+        // });
     }
 
     function autocompleteTriggered(input, item) {
