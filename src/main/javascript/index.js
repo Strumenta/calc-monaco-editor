@@ -55,18 +55,6 @@ $( document ).ready(function() {
         $(this).siblings(".section-content").toggleClass("expanded");
     });
 
-    function d(item) {
-        return hyperHTML.wire($("#types")[0], `:node-${item.uuid}`) `<div class='type-definition'>
-        <input class='keyword' value='type'> 
-        <input class='editable' value='My type' required> 
-        <input class='keyword' value='{'/>
-        <div class='fields'
-            <span class='message'>no fields</span>
-            <br>
-            <div class='fields-container'></div></div><input class='keyword' value='}'>
-        </div>`;
-    }
-
     function placeholderKeydown(adder) {
         return function(e) {
             console.log(`placeholderKeydown ${e.key}`);
@@ -81,10 +69,23 @@ $( document ).ready(function() {
         };
     }
 
-    function hKeyword(text) {
-        return h('input.keyword', {props: {value:text},   hook: {
+    function hKeyword(text, keyActions) {
+        return h('input.keyword', {
+            props: {value:text},
+            hook: {
                 insert: addAutoresize
-            }});
+            },
+            on: {
+                keydown: function(e) {
+                    console.log(`hKeyword keydown ${e.key}`);
+                    if (keyActions != undefined && keyActions[e.key] != undefined) {
+                        keyActions[e.key](e);
+                    }
+                    e.preventDefault();
+                    return true;
+                }
+            }
+        });
     }
 
     function hLine(children) {
@@ -99,8 +100,8 @@ $( document ).ready(function() {
         return h('input.placeholder',
             {
                 props: {value: '<' + text + '>'},
-                hook: { insert: insertion },
-                on: {keydown: placeholderKeydown(addType)}
+                hook: { insert: addAutoresize },
+                on: {keydown: placeholderKeydown(insertion)}
             }, []);
     }
 
@@ -115,11 +116,19 @@ $( document ).ready(function() {
         if (list.length == 0) {
             children.push(ifEmpty());
         } else {
-            $(list).each(function () {
-               children.push(forElement(this));
+            $(list).each(function (index) {
+               children.push(forElement(this, index));
             });
         }
         return children;
+    }
+
+    function fnAddTypeAt(index) {
+        return function(){
+            console.log("ADDING AT " + index);
+            window.datamodel.types.splice(index, 0, new dm.Type("A type"));
+            updateTypes();
+        };
     }
 
     function updateTypes() {
@@ -129,17 +138,19 @@ $( document ).ready(function() {
             window.datamodel.types,
             function () {
                 return hLine([
-                    hPlaceholder('no types', addAutoresize)]);
+                    hPlaceholder('no types', fnAddTypeAt(0))]);
             },
-            function () {
-                return h('div.type-definition', {}, [
+            function (el, index) {
+                return h('div.type-definition', {key: el.uuid}, [
                     hLine([
                         hKeyword('text'),
-                        hEditable('My type'),
+                        hEditable(el.name),
                         hKeyword('{'),
                     ]),
                     hLine([
-                        hKeyword('}'),
+                        hKeyword('}', {
+                            'Enter': fnAddTypeAt(index + 1)
+                        }),
                     ])])
             })
         );
@@ -151,66 +162,24 @@ $( document ).ready(function() {
 
         window.typesvnode = patch(window.typesvnode, vnode);
 
-
-        //prepareInputs();
-        //var html = "<div id='types'>";
-        //var typesLeftToRender = window.datamodel.types.length;
-        // let typeRenderCb = function(hscript){
-        //     console.log("typeRenderCb called");
-        //     typesLeftToRender--;
-        //     console.log(hscript);
-        //     //hscript = h("div");
-        //     let updatedDomForType = createElement(hscript, {warn:function(msg, vnode){
-        //             console.warn("ISSUE IN CREATE ELEMENT: " + msg);
-        //             console.warn("  node with issue: " + vnode);
-        //         }});
-        //     console.log("updatedDomForType");
-        //     console.log(updatedDomForType);
-        //     html += updatedDomForType;
-        //     if (typesLeftToRender == 0) {
-        //         html += "</div>";
-        //         console.log("UPDATE TYPES");
-        //         console.log(html);
-        //     }
-        // };
-        // var hmodel = h('div', {}, [h("span")]);
-        // var newDom = createElement(hmodel);
-        // console.log("new dom:");
-        // console.log(newDom);
-        // let currentDom = $("#types")[0];
-        // console.log("current dom:");
-        // console.log(currentDom);
-        // //$("#types").replaceWith(newDom);
-        // var patches = diff(currentDom, newDom);
-        // window.patches = patches;
-        // console.log("patches");
-        // console.log(patches);
-        // patch(newDom, patches)
-        // $(window.datamodel.types).each(function () {
-        //     console.log("[rendering a type]");
-        //     //let updatedDomModel = r.render(this, typeRenderCb);
-        //     //let updatedDomForType = createElement(updatedDomModel);
-        //     //console.log(updatedDomForType);
-        //     //html += updatedDomForType;
-        // });
     }
 
-    function addType() {
-        //$("#types").siblings(".empty-message").hide();
-        window.datamodel.types.push(new dm.Type());
-        // $(window.datamodel.types).each(function () {
-        //     console.log("[rendering a type]");
-        //     let updatedDom = r.render(this);
-        // });
-        updateTypes();
-        // $("#types").append("<div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
-        //     +"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
-        // prepareInputs();
-        // $(".add-field-button").click(function () {
-        //     $(this).siblings(".message").hide();
-        //     console.log("add field");
-        // });
-    }
+    // function addType() {
+    //     //$("#types").siblings(".empty-message").hide();
+    //     window.datamodel.types.push(new dm.Type("A type"));
+    //     // $(window.datamodel.types).each(function () {
+    //     //     console.log("[rendering a type]");
+    //     //     let updatedDom = r.render(this);
+    //     // });
+    //     updateTypes();
+    //     // $("#types").append("<div class='type-definition'><input class='keyword' value='type'> <input class='editable' value='My type' required> <input class='keyword' value='{'/>"
+    //     //     +"<div class='fields'><span class='message'>no fields</span><br><div class='fields-container'></div></div><input class='keyword' value='}'></div>");
+    //     // prepareInputs();
+    //     // $(".add-field-button").click(function () {
+    //     //     $(this).siblings(".message").hide();
+    //     //     console.log("add field");
+    //     // });
+    // }
 
     $("#add-type-button").click(function () {
         addType();
@@ -265,7 +234,6 @@ $( document ).ready(function() {
     }
 
     function tryToAdd(t) {
-        console.log("ADDING");
         addField(t);
     }
 

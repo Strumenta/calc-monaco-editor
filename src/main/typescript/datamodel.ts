@@ -10,8 +10,22 @@ class ModelNode {
     }
 }
 
-export class Type extends ModelNode{
-    constructor(uuid?:string) {
+export class Type extends ModelNode {
+    private name: String;
+    private fields: Field[];
+
+    constructor(name:String, uuid?:string) {
         super("Type", uuid);
+        this.name = name;
+        this.fields = [];
+    }
+}
+
+export class Field extends ModelNode {
+    private name: String;
+
+    constructor(name:String, uuid?:string) {
+        super("Field", uuid);
+        this.name = name;
     }
 }
