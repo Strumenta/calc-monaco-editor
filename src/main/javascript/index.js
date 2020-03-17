@@ -1,3 +1,5 @@
+import {moveToNextElement} from "../typescript/Navigation";
+
 const CalcTokensProvider = require('../../main-generated/javascript/CalcTokensProvider.js');
 const ParserFacade = require('../../main-generated/javascript/ParserFacade.js');
 const Navigation = require('../../main-generated/javascript/Navigation.js');
@@ -55,14 +57,25 @@ $( document ).ready(function() {
         $(this).siblings(".section-content").toggleClass("expanded");
     });
 
-    function placeholderKeydown(adder) {
+    // function placeholderKeydown(adder) {
+    //     return function(e) {
+    //         console.log(`placeholderKeydown ${e.key}`);
+    //         switch (e.key) {
+    //             case "Enter":
+    //                 console.log("adding");
+    //                 adder(e);
+    //                 break;
+    //         }
+    //         e.preventDefault();
+    //         return true;
+    //     };
+    // }
+
+    function keydownForKeyActions(keyActions) {
         return function(e) {
-            console.log(`placeholderKeydown ${e.key}`);
-            switch (e.key) {
-                case "Enter":
-                    console.log("adding");
-                    adder(e);
-                    break;
+            console.log(`keydownForKeyActions keydown ${e.key}`);
+            if (keyActions != undefined && keyActions[e.key] != undefined) {
+                keyActions[e.key](e);
             }
             e.preventDefault();
             return true;
@@ -76,14 +89,7 @@ $( document ).ready(function() {
                 insert: addAutoresize
             },
             on: {
-                keydown: function(e) {
-                    console.log(`hKeyword keydown ${e.key}`);
-                    if (keyActions != undefined && keyActions[e.key] != undefined) {
-                        keyActions[e.key](e);
-                    }
-                    e.preventDefault();
-                    return true;
-                }
+                keydown: merge(keydownForKeyActions(keyActions), { "ArrowRight": moveToNextElement})
             }
         });
     }
@@ -96,12 +102,19 @@ $( document ).ready(function() {
         $(vnode.elm).autoresize(myAutoresizeOptions);
     }
 
+    function merge(a, b) {
+        return Object.assign({}, a, b);
+    }
+
     function hPlaceholder(text, insertion) {
         return h('input.placeholder',
             {
                 props: {value: '<' + text + '>'},
                 hook: { insert: addAutoresize },
-                on: {keydown: placeholderKeydown(insertion)}
+                on: {keydown: keydownForKeyActions({
+                    "Enter": insertion,
+                    })
+                }
             }, []);
     }
 
