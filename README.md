@@ -22,7 +22,7 @@ npm install
 tsc
 webpack
 cd server
-./gradlew runServer
+../gradlew runServer
 ```
 
 Now visit http://localhost:8888
