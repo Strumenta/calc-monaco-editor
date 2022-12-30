@@ -10,7 +10,7 @@
     "webpack-cli": "^3.3.7"
   },
   "devDependencies": {
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "monaco-editor": "^0.17.1"
   },
   "scripts": {
