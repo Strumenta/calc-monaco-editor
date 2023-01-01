@@ -6,8 +6,8 @@
   "repository": "https://github.com/Strumenta/calc-monaco-editor",
   "dependencies": {
     "antlr4": "^4.7.2",
-    "webpack": "^4.39.2",
-    "webpack-cli": "^3.3.7"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   },
   "devDependencies": {
     "mocha": "^6.2.0",
