@@ -14,8 +14,11 @@
     "webpack-cli": "^3.3.7"
   },
   "scripts": {
+    "all": "npm install && npm run generateParser && npm run compile && npm run test && npm run bundle && npm run serve",
+    "generateParser": "./gradlew generateParser",
     "compile": "tsc",
     "test": "mocha",
-    "bundle": "webpack"
+    "bundle": "webpack",
+    "serve": "cd server && ../gradlew runServer"
   }
 }

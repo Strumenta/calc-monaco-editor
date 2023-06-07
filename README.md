@@ -17,12 +17,7 @@ It shows how to integrate ANTLR with monaco.
 ## Build everything and run the server
 
 ```
-npm install
-./gradlew generateParser
-npm run compile
-npm run bundle
-cd server
-../gradlew runServer
+npm run all
 ```
 
 Now visit http://localhost:8888
