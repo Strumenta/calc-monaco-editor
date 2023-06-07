@@ -160,6 +160,15 @@ export function validate(input) : Error[] {
         }
     }
 
+    for (const output of tree.outputs) {
+
+        const outputIdentifier = output.ID().symbol;
+
+        if (!scope.some(x => x === outputIdentifier.text)) {
+            errors.push(createErrorAt(outputIdentifier, "undeclared symbol"));
+        }
+    }
+
     function validateExpression(expression) {
         for (const child of expression.children) {
             if (child.children) {
