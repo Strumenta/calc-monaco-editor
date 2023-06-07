@@ -1,29 +1,9 @@
 module.exports = {
-    entry: './src/main/javascript/index.js',
-    output: {
-        filename: 'main.js',
-    },
-    module: {
-        rules: [{
-            test: /\.tsx?$/,
-            use: 'ts-loader',
-            exclude: /node_modules/
-        }]
-    },
+    mode: "production",
+    entry: "./src/main/javascript/index.js",
     resolve: {
-        modules: ['node_modules'],
-        extensions: [ '.tsx', '.ts', '.js' ]
-    },
-    mode: 'production',
-    node: {
-        fs: 'empty',
-        global: true,
-        crypto: 'empty',
-        tls: 'empty',
-        net: 'empty',
-        process: true,
-        module: false,
-        clearImmediate: false,
-        setImmediate: false
+        fallback: {
+            "fs": false
+        },
     }
 }
