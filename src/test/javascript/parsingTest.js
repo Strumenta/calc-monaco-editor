@@ -131,3 +131,19 @@ describe('Unrecognized tokens cause errors', function () {
         ]);
     });
 });
+
+describe('Semantic validation', function () {
+    describe('should report input already declared', function () {
+        let input = "input i\ninput i\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 7, 8, "input already declared")
+        ]);
+    });
+    describe('should report input already declared twice', function () {
+        let input = "input i\ninput i\ninput i\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 7, 8, "input already declared"),
+            new parserFacade.Error(3, 3, 7, 8, "input already declared")
+        ]);
+    });
+});
