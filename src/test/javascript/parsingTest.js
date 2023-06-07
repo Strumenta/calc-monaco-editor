@@ -171,3 +171,25 @@ describe('Semantic validation', function () {
         ]);
     });
 });
+
+describe('Semantic validation of examples being edited', function () {
+    describe('deleting input identifier', function () {
+        let input = "input a\ninput\ninput a\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 5, 6, "missing ID at '\\n'"),
+            new parserFacade.Error(3, 3, 7, 8, "input already declared")
+        ]);
+    });
+    describe('deleting calculation value still declares the target', function () {
+        let input = "a = 1 + 1\nb = \nc = a + b\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 4, 5, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}"),
+        ]);
+    });
+    describe('deleting output identifier', function () {
+        let input = "input a\noutput\noutput a\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 6, 7, "missing ID at '\\n'"),
+        ]);
+    });
+});
