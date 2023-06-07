@@ -158,4 +158,16 @@ describe('Semantic validation', function () {
             new parserFacade.Error(4, 4, 5, 6, "undeclared symbol")
         ]);
     });
+    describe('should report undeclared symbol for output', function () {
+        let input = "output o\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(1, 1, 8, 9, "undeclared symbol")
+        ]);
+    });
+    describe('should report undeclared symbol for second output', function () {
+        let input = "input i\no = i\noutput o\noutput x\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(4, 4, 8, 9, "undeclared symbol")
+        ]);
+    });
 });
