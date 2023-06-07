@@ -8,6 +8,13 @@ It shows how to integrate ANTLR with monaco.
 
 ![Calc Example](./doc/images/calc_example.png)
 
+## Features
+
+* Text editing provided by [monaco](https://github.com/microsoft/monaco-editor)
+* Syntax highlighting for custom language
+* Syntax error reporting with expected alternatives
+* Semantic error reporting for undeclared and redeclared variables
+
 ## Generating the lexer and the parser
 
 ```
