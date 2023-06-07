@@ -137,5 +137,24 @@ export function validate(input) : Error[] {
     parser._errHandler = new CalcErrorStrategy();
 
     const tree = parser.compilationUnit();
+
+    const scope = [];
+
+    for (const input of tree.inputs) {
+
+        const inputIdentifier = input.ID().symbol;
+
+        if (scope.some(x => x === inputIdentifier.text)) {
+            errors.push(createErrorAt(inputIdentifier, "input already declared"));
+        }
+        else {
+            scope.push(inputIdentifier.text);
+        }
+    }
+
     return errors;
+}
+
+function createErrorAt(node, message) {
+    return new Error(node.line, node.line, node.column + 1, node.column + node.stop - node.start + 2, message);
 }
