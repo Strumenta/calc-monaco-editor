@@ -142,6 +142,8 @@ export function validate(input) : Error[] {
 
     for (const input of tree.inputs) {
 
+        if (input.ID() === null) continue;
+
         const inputIdentifier = input.ID().symbol;
 
         if (scope.some(x => x === inputIdentifier.text)) {
@@ -162,6 +164,8 @@ export function validate(input) : Error[] {
 
     for (const output of tree.outputs) {
 
+        if (output.ID() === null) continue;
+
         const outputIdentifier = output.ID().symbol;
 
         if (!scope.some(x => x === outputIdentifier.text)) {
@@ -170,6 +174,8 @@ export function validate(input) : Error[] {
     }
 
     function validateExpression(expression) {
+        if (expression === null || expression.children === null) return;
+
         for (const child of expression.children) {
             if (child.children) {
                 validateExpression(child);
