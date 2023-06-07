@@ -1,3 +1,4 @@
+const MonacoPlugin = require("monaco-editor-webpack-plugin");
 module.exports = {
     mode: "production",
     entry: "./src/main/javascript/index.js",
@@ -5,5 +6,6 @@ module.exports = {
         fallback: {
             "fs": false
         },
-    }
+    },
+    plugins: [new MonacoPlugin({languages: []})]
 }
