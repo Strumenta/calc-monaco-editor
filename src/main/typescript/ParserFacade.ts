@@ -168,6 +168,8 @@ export function validate(input) : Error[] {
 
         const outputIdentifier = output.ID().symbol;
 
+        if (outputIdentifier.text === "<missing null>") continue;
+
         if (!scope.some(x => x === outputIdentifier.text)) {
             errors.push(createErrorAt(outputIdentifier, "undeclared symbol"));
         }
