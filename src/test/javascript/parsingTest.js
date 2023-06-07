@@ -64,12 +64,12 @@ describe('Basic parsing of simple script', function () {
 
 describe('Validation of simple errors on single lines', function () {
     describe('should have recognize missing operand', function () {
-        parseAndCheckErrors("o = i + \n", [
+        parseAndCheckErrors("o = 1 + \n", [
             new parserFacade.Error(1, 1, 8, 9, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}")
         ]);
     });
     describe('should have recognize extra operator', function () {
-        parseAndCheckErrors("o = i +* 2 \n", [
+        parseAndCheckErrors("o = 1 +* 2 \n", [
             new parserFacade.Error(1, 1, 7, 8, "extraneous input '*' expecting {NUMBER_LIT, ID, '(', '-'}")
         ]);
     });
@@ -128,6 +128,68 @@ describe('Unrecognized tokens cause errors', function () {
             "output c\n";
         parseAndCheckErrors(input, [
             new parserFacade.Error(2, 2, 0, 1, "extraneous input '$' expecting {<EOF>, 'input', 'output', ID}")
+        ]);
+    });
+});
+
+describe('Semantic validation', function () {
+    describe('should report input already declared', function () {
+        let input = "input i\ninput i\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 7, 8, "input already declared")
+        ]);
+    });
+    describe('should report input already declared twice', function () {
+        let input = "input i\ninput i\ninput i\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 7, 8, "input already declared"),
+            new parserFacade.Error(3, 3, 7, 8, "input already declared")
+        ]);
+    });
+    describe('should report undeclared symbol', function () {
+        let input = "o = i\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(1, 1, 5, 6, "undeclared symbol")
+        ]);
+    });
+    describe('should report undeclared symbol in line 4', function () {
+        let input = "input i\no = i\no = o\no = u\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(4, 4, 5, 6, "undeclared symbol")
+        ]);
+    });
+    describe('should report undeclared symbol for output', function () {
+        let input = "output o\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(1, 1, 8, 9, "undeclared symbol")
+        ]);
+    });
+    describe('should report undeclared symbol for second output', function () {
+        let input = "input i\no = i\noutput o\noutput x\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(4, 4, 8, 9, "undeclared symbol")
+        ]);
+    });
+});
+
+describe('Semantic validation of examples being edited', function () {
+    describe('deleting input identifier', function () {
+        let input = "input a\ninput\ninput a\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 5, 6, "missing ID at '\\n'"),
+            new parserFacade.Error(3, 3, 7, 8, "input already declared")
+        ]);
+    });
+    describe('deleting calculation value still declares the target', function () {
+        let input = "a = 1 + 1\nb = \nc = a + b\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 4, 5, "mismatched input '\\n' expecting {NUMBER_LIT, ID, '(', '-'}"),
+        ]);
+    });
+    describe('deleting output identifier', function () {
+        let input = "input a\noutput\noutput a\n";
+        parseAndCheckErrors(input, [
+            new parserFacade.Error(2, 2, 6, 7, "missing ID at '\\n'"),
         ]);
     });
 });

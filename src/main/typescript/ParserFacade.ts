@@ -137,5 +137,65 @@ export function validate(input) : Error[] {
     parser._errHandler = new CalcErrorStrategy();
 
     const tree = parser.compilationUnit();
+
+    const scope = []; // ? Should be a Set but can't use it unless typescript targets ES6+
+
+    for (const input of tree.inputs) {
+
+        if (input.ID() === null) continue;
+
+        const inputIdentifier = input.ID().symbol;
+
+        if (scope.some(x => x === inputIdentifier.text)) {
+            errors.push(createErrorAt(inputIdentifier, "input already declared"));
+        }
+        else {
+            scope.push(inputIdentifier.text);
+        }
+    }
+
+    for (const calculation of tree.calcs) {
+        validateExpression(calculation.value);
+
+        if (!scope.some(x => x === calculation.target.text)) {
+            scope.push(calculation.target.text);
+        }
+    }
+
+    for (const output of tree.outputs) {
+
+        if (output.ID() === null) continue;
+
+        const outputIdentifier = output.ID().symbol;
+
+        if (outputIdentifier.text === "<missing null>") continue;
+
+        if (!scope.some(x => x === outputIdentifier.text)) {
+            errors.push(createErrorAt(outputIdentifier, "undeclared symbol"));
+        }
+    }
+
+    function validateExpression(expression) {
+        if (expression === null || expression.children === null) return;
+
+        for (const child of expression.children) {
+            if (child.children) {
+                validateExpression(child);
+            }
+            else if (child.symbol && child.symbol.type == CalcLexer.ID) {
+
+                const symbol = child.symbol;
+
+                if (!scope.some(x => x == symbol.text)) {
+                    errors.push(createErrorAt(symbol, "undeclared symbol"));
+                }
+            }
+        }
+    }
+
     return errors;
+}
+
+function createErrorAt(node, message) {
+    return new Error(node.line, node.line, node.column + 1, node.column + node.stop - node.start + 2, message);
 }
