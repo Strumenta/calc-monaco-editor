@@ -9,10 +9,13 @@
     "monaco-editor": "^0.17.1"
   },
   "devDependencies": {
+    "typescript": "^5.1.3",
     "mocha": "^6.2.0",
     "webpack-cli": "^3.3.7"
   },
   "scripts": {
-    "test": "mocha"
+    "compile": "tsc",
+    "test": "mocha",
+    "bundle": "webpack"
   }
 }

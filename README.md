@@ -19,8 +19,8 @@ It shows how to integrate ANTLR with monaco.
 ```
 npm install
 ./gradlew generateParser
-tsc
-webpack
+npm run compile
+npm run bundle
 cd server
 ../gradlew runServer
 ```
