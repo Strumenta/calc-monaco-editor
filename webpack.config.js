@@ -7,5 +7,13 @@ module.exports = {
             "fs": false
         },
     },
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ["style-loader", "css-loader"]
+            }
+        ]
+    },
     plugins: [new MonacoPlugin({languages: []})]
 }

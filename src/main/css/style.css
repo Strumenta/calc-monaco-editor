@@ -5,3 +5,9 @@ h2 {
 body {
     background-color: #eee;
 }
+
+#editorBox {
+    width: 800px;
+    height: 600px;
+    border: 1px solid grey;
+}
