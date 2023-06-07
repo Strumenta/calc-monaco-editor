@@ -14,14 +14,16 @@
     "webpack-cli": "5.1.3",
     "monaco-editor-webpack-plugin": "7.0.1",
     "css-loader": "6.8.1",
-    "style-loader": "3.3.3"
+    "style-loader": "3.3.3",
+    "serve": "14.2.0"
   },
   "scripts": {
-    "all": "npm install && npm run generateParser && npm run compile && npm run test && npm run bundle && npm run serve",
+    "all": "npm install && npm run generateParser && npm run compile && npm run test && npm run bundle && npm run packageWeb && npm run serve",
     "generateParser": "./gradlew generateParser",
     "compile": "tsc",
     "test": "mocha src/test/javascript",
     "bundle": "webpack",
-    "serve": "cd server && ../gradlew runServer"
+    "packageWeb": "mkdir -p web/css web/js && cp src/main/html/index.html web/index.html && cp src/main/css/style.css web/css/style.css && cp dist/main.js web/js/main.js && cp dist/editor.worker.js web/js/editor.worker.js",
+    "serve": "serve web -p 8888"
   }
 }
