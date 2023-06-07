@@ -138,7 +138,7 @@ export function validate(input) : Error[] {
 
     const tree = parser.compilationUnit();
 
-    const scope = [];
+    const scope = []; // ? Should be a Set but can't use it unless typescript targets ES6+
 
     for (const input of tree.inputs) {
 
@@ -149,6 +149,30 @@ export function validate(input) : Error[] {
         }
         else {
             scope.push(inputIdentifier.text);
+        }
+    }
+
+    for (const calculation of tree.calcs) {
+        validateExpression(calculation.value);
+
+        if (!scope.some(x => x === calculation.target.text)) {
+            scope.push(calculation.target.text);
+        }
+    }
+
+    function validateExpression(expression) {
+        for (const child of expression.children) {
+            if (child.children) {
+                validateExpression(child);
+            }
+            else if (child.symbol && child.symbol.type == CalcLexer.ID) {
+
+                const symbol = child.symbol;
+
+                if (!scope.some(x => x == symbol.text)) {
+                    errors.push(createErrorAt(symbol, "undeclared symbol"));
+                }
+            }
         }
     }
 
