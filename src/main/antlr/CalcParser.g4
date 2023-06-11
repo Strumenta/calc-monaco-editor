@@ -27,7 +27,7 @@ calc:
 
 expression:
 	NUMBER_LIT
-	| ID
+	| id=ID
 	| LPAREN expression RPAREN
 	| expression operator=(MUL|DIV) expression
 	| expression operator=(MINUS|PLUS) expression
