@@ -4,6 +4,8 @@ import {CommonTokenStream, InputStream, Token, error, Parser} from '../../../nod
 import {DefaultErrorStrategy} from '../../../node_modules/antlr4/error/ErrorStrategy.js'
 import {CalcLexer} from "../../main-generated/javascript/CalcLexer.js"
 import {CalcParser} from "../../main-generated/javascript/CalcParser.js"
+import {InputsVisitor} from "../javascript/InputsVisitor.js";
+import {EvalVisitor} from "../javascript/EvalVisitor.js";
 
 class ConsoleErrorListener extends error.ErrorListener {
     syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
@@ -138,4 +140,34 @@ export function validate(input) : Error[] {
 
     const tree = parser.compilationUnit();
     return errors;
+}
+
+export function getInputs(input) : object[] {
+
+    const lexer = createLexer(input);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(new ConsoleErrorListener());
+
+    const parser = createParserFromLexer(lexer);
+    parser.buildParseTrees = true;
+    const tree = parser.compilationUnit();
+
+    let inputsVisitor = new InputsVisitor();
+    let inputs = inputsVisitor.visitCompilationUnit(tree);
+    return inputs;
+}
+
+export function calculateExpression(input,variables) : object[] {
+
+    const lexer = createLexer(input);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(new ConsoleErrorListener());
+
+    const parser = createParserFromLexer(lexer);
+    parser.buildParseTrees = true;
+    const tree = parser.compilationUnit();
+
+    let evalVisitor = new EvalVisitor();
+    let result = evalVisitor.visitCompilationUnit(tree,variables);
+    return result;
 }

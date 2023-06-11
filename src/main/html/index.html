@@ -9,14 +9,27 @@
 <body>
 
 <h2>Calc Editor</h2>
+<div>
+	<button id="run">
+		Run
+	</button>
+</div>
+<div id="modal">
+</div>
+
 <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+<div class="output">
+	<p id="output-value"> >> </p>
+</div>
 
 <script src="node_modules/monaco-editor/min/vs/loader.js"></script>
 <script src="js/main.js"></script>
 
 <script>
 	require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs' }});
-
+	let editor;
+	let result=[];
+	let variables=[];
 	require(['vs/editor/editor.main'], function() {
 		monaco.languages.register({ id: 'calc' });
 
@@ -52,7 +65,7 @@
 			]
 		});
 
-		let editor = monaco.editor.create(document.getElementById('container'), {
+		editor = monaco.editor.create(document.getElementById('container'), {
 			value: [
 				'input salary',
 				'input nEmployees',
@@ -92,6 +105,71 @@
 		});
 
 	});
+
+	document.getElementById("run").addEventListener("click", ()=>{
+		const code = editor.getValue();
+		// get the inputs only and ask the user for the values
+		variables = ParserFacade.getInputs(code);
+		const modals = document.getElementById("modal")
+		if(variables.length>0){
+			let html=`<div id="modal">
+							<div class="modal-content">`
+			for (let i = 0; i < variables.length; i++) {
+				html+=`
+					<input type="text"" id="textInput-${variables[i].variable}" placeholder="Enter the ${variables[i].variable} value">
+				`
+			}
+			html+=`<button id="saveButton">Save</button></div></div>`
+			modals.innerHTML=html;
+			document.getElementById("modal").style.display = "block";
+		}
+		else {
+			// run the visitor giving it the input values to the class constructor
+			result = ParserFacade.calculateExpression(code,variables);
+			writeOutputToConsole(result);
+		}
+
+		const saveButton = document.getElementById('saveButton');
+
+		saveButton.addEventListener('click', () => {
+			// Get text from modal
+			for (let i = 0; i < variables.length; i++) {
+				const textInput = document.getElementById(`textInput-${variables[i].variable}`);
+				const text = textInput.value;
+				// Check if the inserted value is a number to prevent misbehavior
+				if(isNaN(text)){
+					writeErrorToConsole("Error: Assigning "+text+" to "+ variables[i].variable +" : is not a number");
+					return;
+				}
+				variables[i].value=text
+			}
+			document.getElementById("modal").style.display = "none";
+			// Call visitor to make calculations
+			result = ParserFacade.calculateExpression(code,variables);
+			writeOutputToConsole(result);
+
+		});
+	});
+
+	function writeOutputToConsole(result){
+		for (let i = 0; i <result.output.length ; i++) {
+			let output = document.getElementById("output-value");
+			output.innerHTML += "<b>"+result.output[i].variable+"</b>" + " = " + result.output[i].value+"<br>";
+			output.innerHTML += ">> ";
+		}
+		for (let i = 0; i <result.errors.length ; i++) {
+			let output = document.getElementById("output-value");
+			output.innerHTML += '<span style="color:red">'+result.errors[i].message+"</span>"+"<br>";
+			output.innerHTML += ">> ";
+		}
+	}
+
+	function writeErrorToConsole(messsage){
+		let output = document.getElementById("output-value");
+		output.innerHTML += '<span style="color:red">'+messsage+"</span>"+"<br>";
+		output.innerHTML += ">> ";
+	}
+
 </script>
 </body>
 </html>

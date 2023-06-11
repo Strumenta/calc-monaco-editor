@@ -31,6 +31,6 @@ task generateParser(type:JavaExec) {
   outputs.file("$GEN_JS_SRC/${parserName}.tokens")
   main = 'org.antlr.v4.Tool'
   classpath = sourceSets.main.runtimeClasspath
-  args = ['-Dlanguage=JavaScript', "${parserName}.g4", '-no-listener', '-no-visitor', '-o', '../../main-generated/javascript']
+  args = ['-Dlanguage=JavaScript', "${parserName}.g4", '-no-listener','-visitor', '-o', '../../main-generated/javascript']
   workingDir = ANTLR_SRC
 }
