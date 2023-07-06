@@ -2,3 +2,4 @@
 .gradle
 node_modules
 dist
+web
