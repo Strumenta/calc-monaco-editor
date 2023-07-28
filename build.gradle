@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    runtime 'org.antlr:antlr4:4.7.2'
+    implementation 'org.antlr:antlr4:4.13.0'
 }
 
 task generateLexer(type:JavaExec) {
