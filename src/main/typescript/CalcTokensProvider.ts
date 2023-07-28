@@ -1,6 +1,7 @@
 /// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
 import {createLexer} from './ParserFacade'
-import {CommonTokenStream, error, InputStream} from '../../../node_modules/antlr4/index.js'
+import {CommonTokenStream, InputStream, Token} from '../../../node_modules/antlr4/src/antlr4/index'
+import {ErrorListener} from '../../../node_modules/antlr4/src/antlr4/error/ErrorListener.js'
 import ILineTokens = monaco.languages.ILineTokens;
 import IToken = monaco.languages.IToken;
 
@@ -52,7 +53,7 @@ class CalcLineTokens implements ILineTokens {
 export function tokensForLine(input: string): monaco.languages.ILineTokens {
     let errorStartingPoints: number[] = [];
 
-    class ErrorCollectorListener extends error.ErrorListener {
+    class ErrorCollectorListener extends ErrorListener<Token> {
         syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
             errorStartingPoints.push(column)
         }

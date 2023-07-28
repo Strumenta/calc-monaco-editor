@@ -1,11 +1,11 @@
 /// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
 
-import {CommonTokenStream, InputStream, Token, error, Parser} from '../../../node_modules/antlr4/index.js'
-import {DefaultErrorStrategy} from '../../../node_modules/antlr4/error/ErrorStrategy.js'
-import {CalcLexer} from "../../main-generated/javascript/CalcLexer.js"
-import {CalcParser} from "../../main-generated/javascript/CalcParser.js"
+import {CommonTokenStream, InputStream, Token, Parser} from '../../../node_modules/antlr4/src/antlr4/index.node.js'
+import { default as error }  from '../../../node_modules/antlr4/src/antlr4/error/index.js'
+import CalcLexer from "../../main-generated/javascript/CalcLexer.js"
+import CalcParser from "../../main-generated/javascript/CalcParser.js"
 
-class ConsoleErrorListener extends error.ErrorListener {
+class ConsoleErrorListener extends error.ErrorListener<Token> {
     syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
         console.log("ERROR " + msg);
     }
@@ -28,7 +28,7 @@ export class Error {
 
 }
 
-class CollectorErrorListener extends error.ErrorListener {
+class CollectorErrorListener extends error.ErrorListener<Token> {
 
     private errors : Error[] = []
 
@@ -47,7 +47,7 @@ class CollectorErrorListener extends error.ErrorListener {
 
 }
 
-export function createLexer(input: String) {
+export function createLexer(input: string) {
     const chars = new InputStream(input);
     const lexer = new CalcLexer(chars);
 
@@ -56,7 +56,7 @@ export function createLexer(input: String) {
     return lexer;
 }
 
-export function getTokens(input: String) : Token[] {
+export function getTokens(input: string) : Token[] {
     return createLexer(input).getAllTokens()
 }
 
@@ -91,37 +91,27 @@ export function parseTreeStr(input) {
     return tree.toStringTree(parser.ruleNames);
 }
 
-class CalcErrorStrategy extends DefaultErrorStrategy {
+function reportMatch(recognizer) {
+    this.endErrorCondition(recognizer);
+}
 
-     reportUnwantedToken(recognizer: Parser) {
-         return super.reportUnwantedToken(recognizer);
-     }
-
-    singleTokenDeletion(recognizer: Parser) {
-        var nextTokenType = recognizer.getTokenStream().LA(2);
-        if (recognizer.getTokenStream().LA(1) == CalcParser.NL) {
-            return null;
-        }
-        var expecting = this.getExpectedTokens(recognizer);
-        if (expecting.contains(nextTokenType)) {
-            this.reportUnwantedToken(recognizer);
-            recognizer.consume(); // simply delete extra token
-            // we want to return the token we're actually matching
-            var matchedSymbol = recognizer.getCurrentToken();
-            this.reportMatch(recognizer); // we know current token is correct
-            return matchedSymbol;
-        } else {
-            return null;
-        }
+function singleTokenDeletion(recognizer) {
+    var nextTokenType = recognizer.getTokenStream().LA(2);
+    if (recognizer.getTokenStream().LA(1) == CalcParser.NL) {        
+        return null;
     }
-    getExpectedTokens = function(recognizer) {
-        return recognizer.getExpectedTokens();
-    };
-
-    reportMatch = function(recognizer) {
-        this.endErrorCondition(recognizer);
-    };
-
+    var expecting = this.getExpectedTokens(recognizer);
+    if (expecting.contains(nextTokenType)) {
+        this.reportUnwantedToken(recognizer);
+        recognizer.consume(); // simply delete extra token
+        // we want to return the token we're actually matching
+        var matchedSymbol = recognizer.getCurrentToken();
+        this.reportMatch(recognizer); // we know current token is correct
+        return matchedSymbol;
+    }
+    else {
+        return null;
+    }
 }
 
 export function validate(input) : Error[] {
@@ -134,7 +124,10 @@ export function validate(input) : Error[] {
     const parser = createParserFromLexer(lexer);
     parser.removeErrorListeners();
     parser.addErrorListener(new CollectorErrorListener(errors));
-    parser._errHandler = new CalcErrorStrategy();
+    // there seems to be an issue overloading DefaultErrorStrategy with the current version
+    // so we replace directly the needed methods    
+    parser._errHandler.singleTokenDeletion = singleTokenDeletion;
+    parser._errHandler.reportMatch = reportMatch;
 
     const tree = parser.compilationUnit();
     return errors;

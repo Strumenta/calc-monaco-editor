@@ -1,5 +1,5 @@
-let assert = require('assert');
-let parserFacade = require('../../main-generated/javascript/ParserFacade.js');
+import assert from 'assert';
+import * as parserFacade from '../../main-generated/javascript/ParserFacade.js';
 
 function checkToken(tokens, index, typeName, column, text) {
     it('should have ' + typeName + ' in position ' + index, function () {
