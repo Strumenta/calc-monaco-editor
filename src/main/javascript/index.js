@@ -67,7 +67,7 @@ let editor = monaco.editor.create(editorBox, {
 });
 editor.onDidChangeModelContent(function (e) {
     let code = editor.getValue()
-    let syntaxErrors = parserFacade.validate(code);
+    let syntaxErrors = ParserFacade.validate(code);
     let monacoErrors = [];
     for (let e of syntaxErrors) {
         monacoErrors.push({

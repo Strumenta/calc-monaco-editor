@@ -111,7 +111,6 @@ function singleTokenDeletion(recognizer) {
     }
 }
 
-
 export function validate(input) : Error[] {
     let errors : Error[] = [];
 
