@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -10,14 +10,14 @@ dependencies {
 
 task generateLexer(type:JavaExec) {
   def lexerName = "CalcLexer"
-  inputs.file("$ANTLR_SRC/${lexerName}.g4")
-  outputs.file("$GEN_JS_SRC/${lexerName}.js")
+  inputs.file("$ANTLR_SRC/${lexerName}.g4")  
+  outputs.file("$GEN_JS_SRC/${lexerName}.ts")
   outputs.file("$GEN_JS_SRC/${lexerName}.interp")
   outputs.file("$GEN_JS_SRC/${lexerName}.tokens")
   main = 'org.antlr.v4.Tool'
   classpath = sourceSets.main.runtimeClasspath
-  args = ['-Dlanguage=JavaScript', "${lexerName}.g4", '-o', '../../main-generated/javascript']
-  workingDir = ANTLR_SRC   
+  workingDir = ANTLR_SRC
+  args = ['-Dlanguage=TypeScript', "${lexerName}.g4", '-o', '../../main-generated/typescript/']     
 }
 
 task generateParser(type:JavaExec) {
@@ -26,11 +26,11 @@ task generateParser(type:JavaExec) {
   def parserName = "CalcParser"
   inputs.file("$ANTLR_SRC/${parserName}.g4")
   inputs.file("$GEN_JS_SRC/${lexerName}.tokens")
-  outputs.file("$GEN_JS_SRC/${parserName}.js")
+  outputs.file("$GEN_JS_SRC/${parserName}.ts")
   outputs.file("$GEN_JS_SRC/${parserName}.interp")
   outputs.file("$GEN_JS_SRC/${parserName}.tokens")
   main = 'org.antlr.v4.Tool'
   classpath = sourceSets.main.runtimeClasspath
-  args = ['-Dlanguage=JavaScript', "${parserName}.g4", '-no-listener', '-no-visitor', '-o', '../../main-generated/javascript']
+  args = ['-Dlanguage=TypeScript', "${parserName}.g4", '-no-listener', '-no-visitor', '-o', '../../main-generated/typescript/']
   workingDir = ANTLR_SRC
 }

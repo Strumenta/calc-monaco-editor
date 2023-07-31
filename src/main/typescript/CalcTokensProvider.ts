@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
-import {createLexer} from './ParserFacade'
+import {createLexer} from './ParserFacade.js'
 import {CommonTokenStream, InputStream, Token} from '../../../node_modules/antlr4/src/antlr4/index'
-import {ErrorListener} from '../../../node_modules/antlr4/src/antlr4/error/ErrorListener.js'
+import {ErrorListener} from '../../../node_modules/antlr4/src/antlr4/error/ErrorListener'
 import ILineTokens = monaco.languages.ILineTokens;
 import IToken = monaco.languages.IToken;
 

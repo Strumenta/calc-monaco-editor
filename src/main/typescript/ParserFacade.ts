@@ -1,11 +1,11 @@
 /// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
 
-import {CommonTokenStream, InputStream, Token, Parser} from '../../../node_modules/antlr4/src/antlr4/index.node.js'
-import { default as error }  from '../../../node_modules/antlr4/src/antlr4/error/index.js'
-import CalcLexer from "../../main-generated/javascript/CalcLexer.js"
-import CalcParser from "../../main-generated/javascript/CalcParser.js"
+import {CommonTokenStream, Token, Parser, ErrorListener, DefaultErrorStrategy, CharStream} from 'antlr4'
+//import { default as error }  from 'antlr4/error'
+import CalcLexer from "../../main-generated/typescript/CalcLexer.js"
+import CalcParser from "../../main-generated/typescript/CalcParser.js"
 
-class ConsoleErrorListener extends error.ErrorListener<Token> {
+class ConsoleErrorListener extends ErrorListener<Token> {
     syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
         console.log("ERROR " + msg);
     }
@@ -28,7 +28,7 @@ export class Error {
 
 }
 
-class CollectorErrorListener extends error.ErrorListener<Token> {
+class CollectorErrorListener extends ErrorListener<Token> {
 
     private errors : Error[] = []
 
@@ -48,11 +48,9 @@ class CollectorErrorListener extends error.ErrorListener<Token> {
 }
 
 export function createLexer(input: string) {
-    const chars = new InputStream(input);
+    const chars = new CharStream(input);
     const lexer = new CalcLexer(chars);
-
-    lexer.strictMode = false;
-
+    
     return lexer;
 }
 
@@ -88,7 +86,7 @@ export function parseTreeStr(input) {
 
     const tree = parser.compilationUnit();
 
-    return tree.toStringTree(parser.ruleNames);
+    return tree.toStringTree(parser.ruleNames, parser);
 }
 
 function reportMatch(recognizer) {
@@ -114,6 +112,7 @@ function singleTokenDeletion(recognizer) {
     }
 }
 
+
 export function validate(input) : Error[] {
     let errors : Error[] = [];
 
@@ -126,8 +125,8 @@ export function validate(input) : Error[] {
     parser.addErrorListener(new CollectorErrorListener(errors));
     // there seems to be an issue overloading DefaultErrorStrategy with the current version
     // so we replace directly the needed methods    
-    parser._errHandler.singleTokenDeletion = singleTokenDeletion;
-    parser._errHandler.reportMatch = reportMatch;
+    (parser._errHandler as any).singleTokenDeletion = singleTokenDeletion;
+    parser._errHandler.reportMatch = reportMatch;    
 
     const tree = parser.compilationUnit();
     return errors;

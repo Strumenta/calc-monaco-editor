@@ -1,6 +1,6 @@
 import assert from 'assert';
-import * as parserFacade from '../../main-generated/javascript/ParserFacade.js';
-import CalcLexer from '../../main-generated/javascript/CalcLexer.js';
+import * as parserFacade from '../../main/typescript/ParserFacade.js';
+import CalcLexer from '../../main-generated/typescript/CalcLexer.js';
 
 function checkToken(tokens, index, typeName, column, text) {
     it('should have ' + typeName + ' in position ' + index, function () {
