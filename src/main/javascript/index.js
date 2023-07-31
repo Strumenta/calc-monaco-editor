@@ -1,17 +1,17 @@
 import * as monaco from 'monaco-editor';
 
-const CalcTokensProvider = require('../../main-generated/javascript/CalcTokensProvider.js');
-const ParserFacade = require('../../main-generated/javascript/ParserFacade.js');
+import * as calcTokensProvider from '../../main-generated/javascript/main/typescript/CalcTokensProvider.js';
+import * as parserFacade from '../../main-generated/javascript/main/typescript/ParserFacade.js';
 if (typeof window === 'undefined') {
 
 } else {
-    window.CalcTokensProvider = CalcTokensProvider;
-    window.ParserFacade = ParserFacade;
+    window.CalcTokensProvider = calcTokensProvider;
+    window.ParserFacade = parserFacade;
 }
 
 monaco.languages.register({ id: 'calc' });
 
-monaco.languages.setTokensProvider('calc', new CalcTokensProvider.CalcTokensProvider());
+monaco.languages.setTokensProvider('calc', new calcTokensProvider.CalcTokensProvider());
 
 let literalFg = '3b8737';
 let idFg = '344482';
@@ -67,7 +67,7 @@ let editor = monaco.editor.create(editorBox, {
 });
 editor.onDidChangeModelContent(function (e) {
     let code = editor.getValue()
-    let syntaxErrors = ParserFacade.validate(code);
+    let syntaxErrors = parserFacade.validate(code);
     let monacoErrors = [];
     for (let e of syntaxErrors) {
         monacoErrors.push({

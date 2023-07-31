@@ -1,7 +1,6 @@
 /// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
 
 import {CommonTokenStream, Token, Parser, ErrorListener, DefaultErrorStrategy, CharStream} from 'antlr4'
-//import { default as error }  from 'antlr4/error'
 import CalcLexer from "../../main-generated/typescript/CalcLexer.js"
 import CalcParser from "../../main-generated/typescript/CalcParser.js"
 
@@ -49,7 +48,7 @@ class CollectorErrorListener extends ErrorListener<Token> {
 
 export function createLexer(input: string) {
     const chars = new CharStream(input);
-    const lexer = new CalcLexer(chars);
+    const lexer = new CalcLexer(chars);    
     
     return lexer;
 }
