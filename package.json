@@ -24,6 +24,7 @@
   },
   "scripts": {
     "all": "npm install && npm run generateParser && npm run compile && npm run test && npm run bundle && npm run packageWeb && npm run serve",
+    "generateParser": "run-script-os",
     "generateParser:default": "./gradlew generateParser",
     "generateParser:win32": "gradlew generateParser",
     "test": "tsc && mocha src/main-generated/javascript/test/typescript",
