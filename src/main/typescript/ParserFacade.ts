@@ -1,6 +1,8 @@
 /// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
 
-import {CommonTokenStream, Token, Parser, ErrorListener, DefaultErrorStrategy, CharStream} from 'antlr4'
+import {CommonTokenStream, Token, Parser, ErrorListener, CharStream, DefaultErrorStrategy, ErrorStrategy} from 'antlr4'
+
+
 import CalcLexer from "../../main-generated/typescript/CalcLexer.js"
 import CalcParser from "../../main-generated/typescript/CalcParser.js"
 
@@ -88,27 +90,40 @@ export function parseTreeStr(input) {
     return tree.toStringTree(parser.ruleNames, parser);
 }
 
-function reportMatch(recognizer) {
-    this.endErrorCondition(recognizer);
-}
 
-function singleTokenDeletion(recognizer) {
-    var nextTokenType = recognizer.getTokenStream().LA(2);
-    if (recognizer.getTokenStream().LA(1) == CalcParser.NL) {        
-        return null;
+class CalcErrorStrategy extends DefaultErrorStrategy {    
+    reportUnwantedToken(recognizer: Parser) {
+        // the TypeScript definition lacks this method (and others)
+        // @ts-ignore
+        return super.reportUnwantedToken(recognizer);
     }
-    var expecting = this.getExpectedTokens(recognizer);
-    if (expecting.contains(nextTokenType)) {
-        this.reportUnwantedToken(recognizer);
-        recognizer.consume(); // simply delete extra token
-        // we want to return the token we're actually matching
-        var matchedSymbol = recognizer.getCurrentToken();
-        this.reportMatch(recognizer); // we know current token is correct
-        return matchedSymbol;
-    }
-    else {
-        return null;
-    }
+    
+   singleTokenDeletion(recognizer: Parser) {
+       var nextTokenType = recognizer.getTokenStream().LA(2);
+       if (recognizer.getTokenStream().LA(1) == CalcParser.NL) {
+           return null;
+       }
+       var expecting = this.getExpectedTokens(recognizer);
+       if (expecting.contains(nextTokenType)) {
+           this.reportUnwantedToken(recognizer);
+           recognizer.consume(); // simply delete extra token
+           // we want to return the token we're actually matching
+           var matchedSymbol = recognizer.getCurrentToken();
+           this.reportMatch(recognizer); // we know current token is correct
+           return matchedSymbol;
+       } else {
+           return null;
+       }
+   }
+   
+   getExpectedTokens = function(recognizer) {
+       return recognizer.getExpectedTokens();
+   };
+
+   reportMatch = function(recognizer) {
+       this.endErrorCondition(recognizer);
+   };
+
 }
 
 export function validate(input) : Error[] {
@@ -122,9 +137,8 @@ export function validate(input) : Error[] {
     parser.removeErrorListeners();
     parser.addErrorListener(new CollectorErrorListener(errors));
     // there seems to be an issue overloading DefaultErrorStrategy with the current version
-    // so we replace directly the needed methods    
-    (parser._errHandler as any).singleTokenDeletion = singleTokenDeletion;
-    parser._errHandler.reportMatch = reportMatch;    
+    // so we replace directly the needed methods        
+    parser._errHandler = new CalcErrorStrategy();   
 
     const tree = parser.compilationUnit();
     return errors;

@@ -5,7 +5,8 @@
   "license": "Apache-2.0",
   "repository": "https://github.com/Strumenta/calc-monaco-editor",
   "dependencies": {
-    "antlr4": "4.13.0",
+    "antlr4": "4.13.2",
+    "calc-monaco-editor": "file:",
     "monaco-editor": "0.40.0"
   },
   "type": "module",
@@ -23,13 +24,14 @@
   },
   "scripts": {
     "all": "npm install && npm run generateParser && npm run compile && npm run test && npm run bundle && npm run packageWeb && npm run serve",
-    "generateParser": "./gradlew generateParser",
+    "generateParser:default": "./gradlew generateParser",
+    "generateParser:win32": "gradlew generateParser",
     "test": "tsc && mocha src/main-generated/javascript/test/typescript",
     "compile": "tsc",
     "bundle": "webpack",
     "packageWeb": "run-script-os",
-    "packageWeb:default": "mkdir -p web/css && mkdir -p web/js && cp src/main/html/index.html web/index.html && cp src/main/css/style.css web/css/style.css && cp dist/main.js web/js/main.js && cp dist/editor.worker.js web/js/editor.worker.js",
-    "packageWeb:win32": "powershell New-Item -Path 'web\\css' -ItemType Directory -Force -ErrorAction SilentlyContinue && powershell New-Item -Path 'web\\js' -ItemType Directory -Force -ErrorAction SilentlyContinue && powershell cp src\\main\\html\\index.html web\\index.html && powershell cp src\\main\\css\\style.css web\\css\\style.css && powershell cp dist\\main.js web\\js\\main.js && powershell cp dist\\editor.worker.js web\\js\\editor.worker.js",
+    "packageWeb:default": "mkdir -p web/css && mkdir -p web/js && cp src/main/html/index.html web/index.html && cp src/main/css/style.css web/css/style.css && cp dist/main.js web/js/main.js && cp dist/editor.worker.js web/js/editor.worker.js && cp dist/4a477f66bfd4e4d3cf68.ttf web/js/4a477f66bfd4e4d3cf68.ttf",
+    "packageWeb:win32": "powershell New-Item -Path 'web\\css' -ItemType Directory -Force -ErrorAction SilentlyContinue && powershell New-Item -Path 'web\\js' -ItemType Directory -Force -ErrorAction SilentlyContinue && powershell cp src\\main\\html\\index.html web\\index.html && powershell cp src\\main\\css\\style.css web\\css\\style.css && powershell cp dist\\main.js web\\js\\main.js && powershell cp dist\\editor.worker.js web\\js\\editor.worker.js && powershell cp dist\\4a477f66bfd4e4d3cf68.ttf web\\js\\4a477f66bfd4e4d3cf68.ttf",
     "serve": "serve web -p 8888"
   }
 }
