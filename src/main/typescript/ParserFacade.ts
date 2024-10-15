@@ -93,7 +93,7 @@ export function parseTreeStr(input) {
 
 class CalcErrorStrategy extends DefaultErrorStrategy {    
     reportUnwantedToken(recognizer: Parser) {
-        // the TypeScript definition lacks this method (and others)
+        // the TypeScript definition lacks this method
         // @ts-ignore
         return super.reportUnwantedToken(recognizer);
     }
@@ -135,9 +135,7 @@ export function validate(input) : Error[] {
 
     const parser = createParserFromLexer(lexer);
     parser.removeErrorListeners();
-    parser.addErrorListener(new CollectorErrorListener(errors));
-    // there seems to be an issue overloading DefaultErrorStrategy with the current version
-    // so we replace directly the needed methods        
+    parser.addErrorListener(new CollectorErrorListener(errors)); 
     parser._errHandler = new CalcErrorStrategy();   
 
     const tree = parser.compilationUnit();
